@@ -330,13 +330,28 @@
 
         .dot {
             font-size: 1.5rem;
-            color: #000;
             transition: all 0.3s;
         }
 
+        /* Green dots - 3 attempts remaining */
+        .dot.green {
+            color: #22c55e;
+        }
+
+        /* Yellow dots - 2 attempts remaining */
+        .dot.yellow {
+            color: #fbbf24;
+        }
+
+        /* Red dots - 1 attempt remaining */
+        .dot.red {
+            color: #ef4444;
+        }
+
+        /* Used/faded dots */
         .dot.used {
-            opacity: 0.2;
-            color: #ccc;
+            opacity: 0.25;
+            color: #d1d5db;
         }
 
         /* Controls */
@@ -1381,12 +1396,27 @@
         // Update dots display
         function updateAttemptsDisplay() {
             const dotsUsed = 3 - attemptsRemaining;
+
+            // Determine color based on remaining attempts
+            let colorClass = 'green';
+            if (attemptsRemaining === 2) {
+                colorClass = 'yellow';
+            } else if (attemptsRemaining === 1) {
+                colorClass = 'red';
+            }
+
             for (let i = 1; i <= 3; i++) {
                 const dot = document.getElementById(`dot${i}`);
+
+                // Remove all color classes
+                dot.classList.remove('green', 'yellow', 'red', 'used');
+
                 if (i <= dotsUsed) {
+                    // Dot is used - fade it out
                     dot.classList.add('used');
                 } else {
-                    dot.classList.remove('used');
+                    // Dot is active - apply color based on urgency
+                    dot.classList.add(colorClass);
                 }
             }
         }
