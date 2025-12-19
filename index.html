@@ -211,20 +211,29 @@
         /* Game Area - Centered */
         .game-container {
             display: flex;
-            flex-direction: column;
-            align-items: center;
+            flex-direction: row;
+            align-items: flex-start;
             justify-content: center;
+            gap: 30px;
             width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
         }
 
         .word-path-container {
-            flex: 0 0 auto;
-            width: 100%;
+            flex: 1;
             max-width: 400px;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 24px;
+        }
+
+        .attempts-sidebar {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            padding-top: 40px;
         }
 
         .word-path {
@@ -296,14 +305,7 @@
         }
 
         /* Attempts Box */
-        .attempts-row {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 30px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
+        /* Removed - attempts now in sidebar */
 
         .attempts-box {
             background: #fff;
@@ -642,6 +644,16 @@
 
         /* Mobile Responsive */
         @media (max-width: 768px) {
+            .game-container {
+                flex-direction: column;
+                align-items: center;
+                gap: 20px;
+            }
+
+            .attempts-sidebar {
+                padding-top: 0;
+            }
+
             h1 {
                 font-size: 2.5rem;
             }
@@ -792,17 +804,6 @@
 
         <!-- Play Tab -->
         <div id="play-tab" class="tab-content active">
-            <div class="attempts-row">
-                <div class="attempts-box">
-                    <div class="attempts-label">Attempts</div>
-                    <div class="attempts-dots" id="attempts-display">
-                        <span class="dot" id="dot1">●</span>
-                        <span class="dot" id="dot2">●</span>
-                        <span class="dot" id="dot3">●</span>
-                    </div>
-                </div>
-            </div>
-
             <div class="game-container">
                 <div class="word-path-container">
                     <div class="word-path" id="word-path">
@@ -816,6 +817,17 @@
                     <div class="controls">
                         <div class="message" id="message"></div>
                         <button class="check-btn" id="check-btn">Check Path</button>
+                    </div>
+                </div>
+
+                <div class="attempts-sidebar">
+                    <div class="attempts-box">
+                        <div class="attempts-label">Attempts</div>
+                        <div class="attempts-dots" id="attempts-display">
+                            <span class="dot" id="dot1">●</span>
+                            <span class="dot" id="dot2">●</span>
+                            <span class="dot" id="dot3">●</span>
+                        </div>
                     </div>
                 </div>
             </div>
