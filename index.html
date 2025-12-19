@@ -801,11 +801,6 @@
                         <span class="dot" id="dot3">●</span>
                     </div>
                 </div>
-                <div class="solution-count-display">
-                    <span style="font-size: 0.9rem; font-weight: 600; opacity: 0.7;">
-                        Solutions Found: <span id="found-count">0</span>
-                    </span>
-                </div>
             </div>
 
             <div class="game-container">
@@ -1642,12 +1637,6 @@
             // Reset found solutions tracker
             foundSolutions = [];
 
-            // Reset found count display
-            const foundCountEl = document.getElementById('found-count');
-            if (foundCountEl) {
-                foundCountEl.textContent = '0';
-            }
-
             // Reset inputs
             document.getElementById('word1').value = '';
             document.getElementById('word2').value = '';
@@ -1834,12 +1823,6 @@
             // Add to found solutions
             foundSolutions.push(userSolution);
 
-            // Update found count display
-            const foundCountEl = document.getElementById('found-count');
-            if (foundCountEl) {
-                foundCountEl.textContent = foundSolutions.length;
-            }
-
             showMessage('Perfect! You solved it!', 'success');
 
             // Remove any existing correct/highlight classes before animation
@@ -1944,11 +1927,7 @@
 
             // Update title and subtitle
             document.getElementById('success-title').textContent = 'Excellent!';
-            if (foundSolutions.length === 1) {
-                document.getElementById('success-subtitle').textContent = `You found a valid solution!`;
-            } else {
-                document.getElementById('success-subtitle').textContent = `You found ${foundSolutions.length} solutions!`;
-            }
+            document.getElementById('success-subtitle').textContent = `You found a valid path!`;
 
             let messageHTML = `<div style="text-align: center;">`;
             messageHTML += `<div style="margin-bottom: 15px; font-size: 1.1rem;">${userPath}</div>`;
