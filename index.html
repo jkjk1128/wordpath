@@ -479,6 +479,147 @@
             font-size: 1.1rem;
         }
 
+        /* Tutorial Modal */
+        .tutorial-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .tutorial-content {
+            background: #FFF7E7;
+            border: 4px solid #000;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            margin: 20px;
+            box-shadow: 0 10px 0 #000;
+        }
+
+        .tutorial-content h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .tutorial-rules {
+            text-align: left;
+            margin: 20px 0;
+            font-size: 1rem;
+            line-height: 1.8;
+        }
+
+        .tutorial-rules li {
+            margin-bottom: 10px;
+        }
+
+        .tutorial-demo {
+            background: #fff;
+            border: 3px solid #000;
+            border-radius: 12px;
+            padding: 30px 20px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .demo-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            opacity: 0.6;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .demo-words {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .demo-word {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+        }
+
+        .demo-arrow {
+            font-size: 1.5rem;
+            opacity: 0.4;
+        }
+
+        .demo-input-container {
+            margin-top: 20px;
+        }
+
+        .demo-input {
+            padding: 12px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            text-align: center;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            border: 3px solid #000;
+            border-radius: 8px;
+            background: #fff;
+            font-family: inherit;
+            outline: none;
+        }
+
+        .demo-input.typing {
+            border-color: #667eea;
+            animation: pulse 0.5s;
+        }
+
+        .demo-letter-highlight {
+            color: #667eea;
+            animation: highlight 0.5s;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes highlight {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        .tutorial-close-btn {
+            background: #667eea;
+            color: white;
+            border: 3px solid #000;
+            border-radius: 10px;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #000;
+            transition: all 0.2s;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .tutorial-close-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #000;
+        }
+
+        .tutorial-close-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #000;
+        }
+
         footer {
             text-align: center;
             margin-top: auto;
@@ -594,6 +735,49 @@
         <button class="play-btn" id="play-btn-landing">Play</button>
     </div>
 
+    <!-- Tutorial Modal -->
+    <div class="tutorial-modal" id="tutorial-modal">
+        <div class="tutorial-content">
+            <h2>How to Play</h2>
+
+            <p style="font-size: 0.95rem; line-height: 1.5; margin: 20px 0; text-align: center;">
+                Connect the first word to the last word by changing<br><strong>one letter at a time</strong>.
+            </p>
+
+            <div class="tutorial-demo">
+                <div class="demo-label">Example</div>
+
+                <div style="display: flex; flex-direction: column; gap: 8px; margin: 20px auto; max-width: 200px;">
+                    <div style="padding: 10px; background: #e8e8e8; border: 2px solid #999; border-radius: 8px; font-size: 1.2rem; font-weight: 700; letter-spacing: 2px; text-align: center;">
+                        COLD
+                    </div>
+
+                    <div style="position: relative;">
+                        <input type="text" class="demo-input" id="demo-input-1" maxlength="4" readonly value="" style="width: 100%; margin: 0; padding: 10px; font-size: 1.2rem;">
+                        <div id="demo-highlight-1" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; font-weight: 700; letter-spacing: 4px; pointer-events: none; display: none;"></div>
+                    </div>
+
+                    <div style="position: relative;">
+                        <input type="text" class="demo-input" id="demo-input-2" maxlength="4" readonly value="" style="width: 100%; margin: 0; padding: 10px; font-size: 1.2rem;">
+                        <div id="demo-highlight-2" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; font-weight: 700; letter-spacing: 4px; pointer-events: none; display: none;"></div>
+                    </div>
+
+                    <div style="position: relative;">
+                        <input type="text" class="demo-input" id="demo-input-3" maxlength="4" readonly value="" style="width: 100%; margin: 0; padding: 10px; font-size: 1.2rem;">
+                        <div id="demo-highlight-3" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; font-weight: 700; letter-spacing: 4px; pointer-events: none; display: none;"></div>
+                    </div>
+
+                    <div style="padding: 10px; background: #e8e8e8; border: 2px solid #999; border-radius: 8px; font-size: 1.2rem; font-weight: 700; letter-spacing: 2px; text-align: center; position: relative;">
+                        <span id="demo-end-word">WARM</span>
+                        <span id="demo-highlight-end" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; font-weight: 700; letter-spacing: 2px; pointer-events: none; display: none;"></span>
+                    </div>
+                </div>
+            </div>
+
+            <button class="tutorial-close-btn" id="tutorial-close-btn">Got it!</button>
+        </div>
+    </div>
+
     <div class="container">
         <header>
             <h1>Word Hop</h1>
@@ -619,7 +803,7 @@
                 </div>
                 <div class="solution-count-display">
                     <span style="font-size: 0.9rem; font-weight: 600; opacity: 0.7;">
-                        Solutions Found: <span id="found-count">0</span> / <span id="solution-count">-</span>
+                        Solutions Found: <span id="found-count">0</span>
                     </span>
                 </div>
             </div>
@@ -802,7 +986,23 @@
             'bold', 'bolt', 'last', 'lost', 'host', 'most', 'bird', 'bard', 'barn', 'sick',
             'silk', 'silt', 'salt', 'sock', 'soak', 'soap', 'sing', 'pink', 'pine', 'slow',
             'slaw', 'claw', 'clay', 'sack', 'back', 'bank', 'seep', 'seen', 'teen', 'term',
-            'dare', 'bare', 'barn', 'lose', 'rose', 'cola', 'wast'
+            'dare', 'bare', 'barn', 'lose', 'rose', 'cola', 'wast',
+            // Additional common 4-letter words
+            'fork', 'pork', 'cork', 'work', 'york', 'born', 'corn', 'horn', 'torn', 'worn',
+            'more', 'bore', 'core', 'gore', 'lore', 'pore', 'sore', 'tore', 'wore',
+            'bath', 'math', 'path', 'bash', 'cash', 'dash', 'hash', 'lash', 'mash', 'rash',
+            'bell', 'cell', 'dell', 'fell', 'hell', 'jell', 'sell', 'tell', 'well', 'yell',
+            'bent', 'dent', 'lent', 'rent', 'sent', 'tent', 'vent', 'went',
+            'best', 'fest', 'jest', 'nest', 'pest', 'rest', 'test', 'vest', 'west', 'zest',
+            'bite', 'cite', 'kite', 'lite', 'mite', 'site',
+            'bank', 'dank', 'hank', 'rank', 'sank', 'tank', 'yank',
+            'barn', 'darn', 'earn', 'tarn', 'warn', 'yarn',
+            'base', 'case', 'vase',
+            'beam', 'cream', 'ream', 'seam', 'team',
+            'bean', 'dean', 'lean', 'mean', 'wean',
+            'came', 'fame', 'game', 'lame', 'name', 'same', 'tame',
+            'cape', 'gape', 'tape',
+            'cats', 'bats', 'hats', 'mats', 'pats', 'rats', 'vats'
         ]);
 
         // Daily puzzle pairs - 365 VALIDATED puzzles
@@ -1428,19 +1628,19 @@
             document.getElementById('start-word').textContent = currentPuzzle.start.toUpperCase();
             document.getElementById('end-word').textContent = currentPuzzle.end.toUpperCase();
 
-            // Compute all valid solutions for this puzzle
-            console.log(`Computing all valid solutions for ${currentPuzzle.start.toUpperCase()} → ${currentPuzzle.end.toUpperCase()}...`);
-            currentPuzzleSolutions = findAllPaths(currentPuzzle.start, currentPuzzle.end, 4);
-            console.log(`Found ${currentPuzzleSolutions.length} valid solution(s)`);
+            // ✅ NO LONGER NEEDED: We accept ANY valid path, not just predefined solutions
+            // Computing all solutions is computationally expensive and unnecessary
+            console.log(`Today's puzzle: ${currentPuzzle.start.toUpperCase()} → ${currentPuzzle.end.toUpperCase()}`);
+            console.log(`✅ Game accepts ANY valid path following the rules!`);
+            console.log(`✅ CRITICAL BUG FIX: The game now accepts ALL valid English words that follow the rules.`);
+            console.log(`   - Valid words are checked against the VALID_WORDS dictionary`);
+            console.log(`   - Each word must differ by exactly ONE letter from the previous word`);
+            console.log(`   - No word can be used twice in the same path`);
+            console.log(`   - Example: FORK → PORK is now accepted (if valid path exists)`);
+            currentPuzzleSolutions = []; // Not used anymore, but keep variable to avoid breaking references
 
             // Reset found solutions tracker
             foundSolutions = [];
-
-            // Display solution count in UI
-            const solutionCountEl = document.getElementById('solution-count');
-            if (solutionCountEl) {
-                solutionCountEl.textContent = currentPuzzleSolutions.length;
-            }
 
             // Reset found count display
             const foundCountEl = document.getElementById('found-count');
@@ -1552,6 +1752,9 @@
             let failedAtStep = -1;
             let isChainValid = true;
 
+            // Check for duplicate words in the path
+            const usedWords = new Set([currentPuzzle.start.toLowerCase(), currentPuzzle.end.toLowerCase()]);
+
             // Validate each step in the chain
             for (let i = 0; i < 3; i++) {
                 const userWord = words[i];
@@ -1572,6 +1775,15 @@
                     failedAtStep = i;
                     break;
                 }
+
+                // Check for duplicate words in the path
+                if (usedWords.has(userWord)) {
+                    errorMessage = `"${userWord.toUpperCase()}" has already been used in this path`;
+                    isChainValid = false;
+                    failedAtStep = i;
+                    break;
+                }
+                usedWords.add(userWord);
 
                 // Check if word differs by exactly one letter from previous
                 if (!oneLetterDiff(prevWord, userWord)) {
@@ -1601,65 +1813,51 @@
                 return;
             }
 
-            // Check if user's chain matches ANY valid solution
+            // ✅ RULE-BASED VALIDATION: Accept ANY valid path
+            // A path is valid if it follows all the rules (checked above)
             const userSolution = [word1, word2, word3];
-            const isCorrectSolution = currentPuzzleSolutions.some(solution =>
-                solution[0] === word1 && solution[1] === word2 && solution[2] === word3
+
+            // Check if user already found this exact solution
+            const alreadyFound = foundSolutions.some(found =>
+                found[0] === word1 && found[1] === word2 && found[2] === word3
             );
 
-            if (isCorrectSolution) {
-                // Check if user already found this solution
-                const alreadyFound = foundSolutions.some(found =>
-                    found[0] === word1 && found[1] === word2 && found[2] === word3
-                );
-
-                if (alreadyFound) {
-                    attemptsRemaining--;
-                    updateAttemptsDisplay();
-                    showMessage('You already found this solution! Try a different one.', 'error');
-                    checkGameOver();
-                    return;
-                }
-
-                // Add to found solutions
-                foundSolutions.push(userSolution);
-
-                // Update found count display
-                const foundCountEl = document.getElementById('found-count');
-                if (foundCountEl) {
-                    foundCountEl.textContent = foundSolutions.length;
-                }
-
-                showMessage('Perfect! You solved it!', 'success');
-
-                // Remove any existing correct/highlight classes before animation
-                document.querySelectorAll('.word-input, .word-box').forEach(el => {
-                    el.classList.remove('correct');
-                    el.classList.remove('highlight-green');
-                });
-
-                // Start the sequential green animation
-                glowPath();
-
-                // Check if there are more solutions to find
-                const hasMoreSolutions = foundSolutions.length < currentPuzzleSolutions.length;
-
-                setTimeout(() => {
-                    showSuccessScreen(userSolution, hasMoreSolutions);
-
-                    if (!hasMoreSolutions) {
-                        // All solutions found - game over
-                        gameOver = true;
-                        document.getElementById('check-btn').disabled = true;
-                    }
-                }, 1500);
-            } else {
-                // Valid chain but not any of the solutions - consume attempt
+            if (alreadyFound) {
                 attemptsRemaining--;
                 updateAttemptsDisplay();
-                showMessage('Valid path, but not the solution. Try again!', 'error');
+                showMessage('You already found this solution! Try a different path.', 'error');
                 checkGameOver();
+                return;
             }
+
+            // ✅ SUCCESS! The path is valid and follows all rules
+            // Add to found solutions
+            foundSolutions.push(userSolution);
+
+            // Update found count display
+            const foundCountEl = document.getElementById('found-count');
+            if (foundCountEl) {
+                foundCountEl.textContent = foundSolutions.length;
+            }
+
+            showMessage('Perfect! You solved it!', 'success');
+
+            // Remove any existing correct/highlight classes before animation
+            document.querySelectorAll('.word-input, .word-box').forEach(el => {
+                el.classList.remove('correct');
+                el.classList.remove('highlight-green');
+            });
+
+            // Start the sequential green animation
+            glowPath();
+
+            // ✅ Player can keep finding new solutions (infinite valid paths possible)
+            const hasMoreSolutions = true; // Always allow players to find more paths
+
+            setTimeout(() => {
+                showSuccessScreen(userSolution, hasMoreSolutions);
+                // Never end the game - players can always try to find more paths
+            }, 1500);
         }
 
         // Check if game over
@@ -1673,13 +1871,20 @@
 
         // Show game over screen
         function showGameOverScreen() {
-            // Build HTML for all valid solutions in vertical box format
+            // Show solutions the user found (if any)
             let solutionsHTML = '';
 
-            if (currentPuzzleSolutions.length === 1) {
-                // Single solution - show vertically
-                const solution = currentPuzzleSolutions[0];
+            if (foundSolutions.length === 0) {
+                // No solutions found - encourage them
+                solutionsHTML = `<div style="text-align: center; padding: 20px;">`;
+                solutionsHTML += `<div style="font-size: 1.2rem; margin-bottom: 15px; opacity: 0.8;">No valid paths found this time.</div>`;
+                solutionsHTML += `<div style="font-size: 1rem; opacity: 0.6;">Come back tomorrow for a new puzzle!</div>`;
+                solutionsHTML += `</div>`;
+            } else if (foundSolutions.length === 1) {
+                // Show the single solution they found
+                const solution = foundSolutions[0];
                 solutionsHTML = `<div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">`;
+                solutionsHTML += `<div style="font-size: 1rem; margin-bottom: 10px; opacity: 0.8;">Your solution:</div>`;
 
                 // Start word
                 solutionsHTML += `<div style="background: #f5f5f5; border: 3px solid #000; border-radius: 12px; padding: 15px 25px; font-size: 1.5rem; font-weight: 700; letter-spacing: 3px; box-shadow: 0 3px 0 #000;">${currentPuzzle.start.toUpperCase()}</div>`;
@@ -1697,7 +1902,7 @@
                 // Multiple solutions - show them side by side
                 solutionsHTML = `<div style="display: flex; gap: 20px; max-height: 400px; overflow-x: auto; overflow-y: hidden; padding: 10px;">`;
 
-                currentPuzzleSolutions.forEach((solution, index) => {
+                foundSolutions.forEach((solution, index) => {
                     solutionsHTML += `<div style="display: flex; flex-direction: column; align-items: center; gap: 10px; min-width: 150px;">`;
                     solutionsHTML += `<div style="font-size: 0.9rem; font-weight: 600; margin-bottom: 5px;">Solution ${index + 1}</div>`;
 
@@ -1737,29 +1942,20 @@
                 currentPuzzle.end.toUpperCase()
             ].join(' → ');
 
-            const remainingSolutions = currentPuzzleSolutions.length - foundSolutions.length;
-
             // Update title and subtitle
-            if (remainingSolutions > 0) {
-                document.getElementById('success-title').textContent = 'Excellent!';
-                document.getElementById('success-subtitle').textContent = `You found solution ${foundSolutions.length} of ${currentPuzzleSolutions.length}!`;
+            document.getElementById('success-title').textContent = 'Excellent!';
+            if (foundSolutions.length === 1) {
+                document.getElementById('success-subtitle').textContent = `You found a valid solution!`;
             } else {
-                document.getElementById('success-title').textContent = 'Perfect!';
-                document.getElementById('success-subtitle').textContent = `You found all ${currentPuzzleSolutions.length} solution${currentPuzzleSolutions.length === 1 ? '' : 's'}!`;
+                document.getElementById('success-subtitle').textContent = `You found ${foundSolutions.length} solutions!`;
             }
 
             let messageHTML = `<div style="text-align: center;">`;
             messageHTML += `<div style="margin-bottom: 15px; font-size: 1.1rem;">${userPath}</div>`;
 
-            if (remainingSolutions > 0) {
-                messageHTML += `<div style="margin-top: 20px; font-size: 0.95rem; opacity: 0.8;">`;
-                messageHTML += `There ${remainingSolutions === 1 ? 'is' : 'are'} ${remainingSolutions} more solution${remainingSolutions === 1 ? '' : 's'}!`;
-                messageHTML += `</div>`;
-            } else {
-                messageHTML += `<div style="margin-top: 20px; font-size: 1rem; font-weight: 600; color: #2e7d32;">`;
-                messageHTML += `Come back tomorrow for a new challenge!`;
-                messageHTML += `</div>`;
-            }
+            messageHTML += `<div style="margin-top: 20px; font-size: 0.95rem; opacity: 0.8;">`;
+            messageHTML += `Can you find another path?`;
+            messageHTML += `</div>`;
             messageHTML += `</div>`;
 
             document.getElementById('success-path').innerHTML = messageHTML;
@@ -1883,12 +2079,12 @@
             // Hide success screen
             document.getElementById('success-screen').style.display = 'none';
 
-            // Show the first solution in the game
-            if (currentPuzzleSolutions.length > 0) {
-                const firstSolution = currentPuzzleSolutions[0];
-                document.getElementById('word1').value = firstSolution[0].toUpperCase();
-                document.getElementById('word2').value = firstSolution[1].toUpperCase();
-                document.getElementById('word3').value = firstSolution[2].toUpperCase();
+            // Show one of the solutions the user found
+            if (foundSolutions.length > 0) {
+                const lastSolution = foundSolutions[foundSolutions.length - 1];
+                document.getElementById('word1').value = lastSolution[0].toUpperCase();
+                document.getElementById('word2').value = lastSolution[1].toUpperCase();
+                document.getElementById('word3').value = lastSolution[2].toUpperCase();
             }
         });
 
@@ -1896,12 +2092,12 @@
             // Hide game over screen
             document.getElementById('game-over-screen').style.display = 'none';
 
-            // Show the first solution in the game
-            if (currentPuzzleSolutions.length > 0) {
-                const firstSolution = currentPuzzleSolutions[0];
-                document.getElementById('word1').value = firstSolution[0].toUpperCase();
-                document.getElementById('word2').value = firstSolution[1].toUpperCase();
-                document.getElementById('word3').value = firstSolution[2].toUpperCase();
+            // Show one of the solutions the user found (if any)
+            if (foundSolutions.length > 0) {
+                const lastSolution = foundSolutions[foundSolutions.length - 1];
+                document.getElementById('word1').value = lastSolution[0].toUpperCase();
+                document.getElementById('word2').value = lastSolution[1].toUpperCase();
+                document.getElementById('word3').value = lastSolution[2].toUpperCase();
             }
         });
 
@@ -1928,11 +2124,152 @@
             // Hide landing page when play is clicked
             playBtn.addEventListener('click', () => {
                 landingPage.classList.add('hidden');
+
+                // Show tutorial after landing page
+                showTutorialIfNeeded();
+            });
+        }
+
+        // Tutorial functionality
+        function animateTutorialDemo() {
+            const input1 = document.getElementById('demo-input-1');
+            const input2 = document.getElementById('demo-input-2');
+            const input3 = document.getElementById('demo-input-3');
+            const highlight1 = document.getElementById('demo-highlight-1');
+            const highlight2 = document.getElementById('demo-highlight-2');
+            const highlight3 = document.getElementById('demo-highlight-3');
+            const endWord = document.getElementById('demo-end-word');
+            const highlightEnd = document.getElementById('demo-highlight-end');
+
+            // Animation sequence: COLD → CORD → CARD → WARD → WARM
+            const sequence = [
+                // Type CORD in box 1
+                { delay: 600, action: () => {
+                    input1.classList.add('typing');
+                    input1.value = 'C';
+                }},
+                { delay: 750, action: () => { input1.value = 'CO'; }},
+                { delay: 900, action: () => { input1.value = 'COR'; }},
+                { delay: 1050, action: () => {
+                    input1.value = 'CORD';
+                    input1.classList.remove('typing');
+                }},
+                // Highlight R in CORD and keep it visible
+                { delay: 1500, action: () => {
+                    input1.value = '';
+                    highlight1.innerHTML = 'CO<span class="demo-letter-highlight">R</span>D';
+                    highlight1.style.display = 'block';
+                }},
+
+                // Type CARD in box 2 (R stays highlighted in box 1)
+                { delay: 2500, action: () => {
+                    input2.classList.add('typing');
+                    input2.value = 'C';
+                }},
+                { delay: 2650, action: () => { input2.value = 'CA'; }},
+                { delay: 2800, action: () => { input2.value = 'CAR'; }},
+                { delay: 2950, action: () => {
+                    // As soon as CARD is typed, show it with R already highlighted
+                    input2.value = '';
+                    input2.classList.remove('typing');
+                    highlight2.innerHTML = 'CA<span class="demo-letter-highlight">R</span>D';
+                    highlight2.style.display = 'block';
+                }},
+                // Then 0.1s later, highlight A as well
+                { delay: 3050, action: () => {
+                    highlight2.innerHTML = 'C<span class="demo-letter-highlight">AR</span>D';
+                }},
+
+                // Type WARD in box 3 (AR stays highlighted in box 2, R in box 1)
+                { delay: 3550, action: () => {
+                    input3.classList.add('typing');
+                    input3.value = 'W';
+                }},
+                { delay: 3700, action: () => { input3.value = 'WA'; }},
+                { delay: 3850, action: () => { input3.value = 'WAR'; }},
+                { delay: 4000, action: () => {
+                    // As soon as WARD is typed, show it with AR already highlighted
+                    input3.value = '';
+                    input3.classList.remove('typing');
+                    highlight3.innerHTML = 'W<span class="demo-letter-highlight">AR</span>D';
+                    highlight3.style.display = 'block';
+                }},
+                // Then 0.1s later, highlight W as well
+                { delay: 4100, action: () => {
+                    highlight3.innerHTML = '<span class="demo-letter-highlight">WAR</span>D';
+                }},
+
+                // Animate WARM with all letters highlighted
+                { delay: 5000, action: () => {
+                    endWord.style.opacity = '0';
+                    highlightEnd.innerHTML = '<span class="demo-letter-highlight">WARM</span>';
+                    highlightEnd.style.display = 'inline';
+                }},
+
+                // Reset for loop
+                { delay: 7000, action: () => {
+                    input1.value = '';
+                    input2.value = '';
+                    input3.value = '';
+                    highlight1.style.display = 'none';
+                    highlight2.style.display = 'none';
+                    highlight3.style.display = 'none';
+                    highlightEnd.style.display = 'none';
+                    endWord.style.opacity = '1';
+                }}
+            ];
+
+            let currentStep = 0;
+
+            function runSequence() {
+                if (currentStep < sequence.length) {
+                    setTimeout(() => {
+                        sequence[currentStep].action();
+                        currentStep++;
+                        runSequence();
+                    }, sequence[currentStep].delay - (sequence[currentStep - 1]?.delay || 0));
+                } else {
+                    // Loop the animation
+                    currentStep = 0;
+                    setTimeout(runSequence, 1000);
+                }
+            }
+
+            runSequence();
+        }
+
+        function showTutorialIfNeeded() {
+            const tutorialModal = document.getElementById('tutorial-modal');
+
+            // TEMPORARY: Always show tutorial for testing
+            // Check if user has seen tutorial
+            // const hasSeenTutorial = localStorage.getItem('hasSeenTutorial');
+
+            // if (!hasSeenTutorial) {
+                // Show tutorial modal
+                tutorialModal.style.display = 'flex';
+
+                // Start animation
+                setTimeout(animateTutorialDemo, 500);
+
+                // Mark as seen
+                // localStorage.setItem('hasSeenTutorial', 'true');
+            // }
+        }
+
+        function setupTutorial() {
+            const tutorialModal = document.getElementById('tutorial-modal');
+            const tutorialCloseBtn = document.getElementById('tutorial-close-btn');
+
+            // Close button handler
+            tutorialCloseBtn.addEventListener('click', () => {
+                tutorialModal.style.display = 'none';
             });
         }
 
         // Initialize on load
         setupLandingPage();
+        setupTutorial();
         initGame();
         updateCountdown();
         setInterval(updateCountdown, 1000); // Update countdown every second
