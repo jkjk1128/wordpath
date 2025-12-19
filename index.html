@@ -211,17 +211,15 @@
         /* Game Area - Centered */
         .game-container {
             display: flex;
-            flex-direction: row;
-            align-items: flex-start;
+            flex-direction: column;
+            align-items: center;
             justify-content: center;
-            gap: 30px;
             width: 100%;
-            max-width: 700px;
             margin: 0 auto;
         }
 
         .word-path-container {
-            flex: 1;
+            width: 100%;
             max-width: 400px;
             display: flex;
             flex-direction: column;
@@ -229,11 +227,11 @@
             gap: 0px;
         }
 
-        .attempts-sidebar {
-            flex: 0 0 auto;
+        .attempts-top {
+            width: 100%;
             display: flex;
-            align-items: flex-start;
-            padding-top: 0;
+            justify-content: center;
+            margin-bottom: 20px;
         }
 
         .word-path {
@@ -641,14 +639,8 @@
 
         /* Mobile Responsive */
         @media (max-width: 768px) {
-            .game-container {
-                flex-direction: column;
-                align-items: center;
-                gap: 20px;
-            }
-
-            .attempts-sidebar {
-                padding-top: 0;
+            .attempts-top {
+                margin-bottom: 15px;
             }
 
             h1 {
@@ -803,6 +795,17 @@
         <div id="play-tab" class="tab-content active">
             <div class="game-container">
                 <div class="word-path-container">
+                    <div class="attempts-top">
+                        <div class="attempts-box">
+                            <div class="attempts-label">Attempts</div>
+                            <div class="attempts-dots" id="attempts-display">
+                                <span class="dot" id="dot1">●</span>
+                                <span class="dot" id="dot2">●</span>
+                                <span class="dot" id="dot3">●</span>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="word-path" id="word-path">
                         <div class="word-box" id="start-word">COLD</div>
                         <input type="text" class="word-input" id="word1" maxlength="4" placeholder="____">
@@ -814,17 +817,6 @@
                     <div class="controls">
                         <div class="message" id="message"></div>
                         <button class="check-btn" id="check-btn">Check Path</button>
-                    </div>
-                </div>
-
-                <div class="attempts-sidebar">
-                    <div class="attempts-box">
-                        <div class="attempts-label">Attempts</div>
-                        <div class="attempts-dots" id="attempts-display">
-                            <span class="dot" id="dot1">●</span>
-                            <span class="dot" id="dot2">●</span>
-                            <span class="dot" id="dot3">●</span>
-                        </div>
                     </div>
                 </div>
             </div>
