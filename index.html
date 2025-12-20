@@ -2206,30 +2206,22 @@
                     const demoEndBox = document.getElementById('demo-end-box');
                     demoEndBox.classList.add('demo-green');
 
-                    // Trigger confetti from sides of tutorial box
+                    // Trigger confetti from top of tutorial box
                     if (typeof confetti !== 'undefined') {
                         const tutorialContent = document.querySelector('.tutorial-content');
                         const rect = tutorialContent.getBoundingClientRect();
-                        const centerY = (rect.top + rect.height / 2) / window.innerHeight;
-                        const leftX = rect.left / window.innerWidth;
-                        const rightX = rect.right / window.innerWidth;
+                        const topY = rect.top / window.innerHeight;
+                        const centerX = (rect.left + rect.width / 2) / window.innerWidth;
 
-                        // Confetti from left side
+                        // Confetti falling from top
                         confetti({
-                            particleCount: 50,
-                            angle: 60,
-                            spread: 55,
-                            origin: { x: leftX, y: centerY },
-                            startVelocity: 45
-                        });
-
-                        // Confetti from right side
-                        confetti({
-                            particleCount: 50,
-                            angle: 120,
-                            spread: 55,
-                            origin: { x: rightX, y: centerY },
-                            startVelocity: 45
+                            particleCount: 100,
+                            angle: 90,
+                            spread: 90,
+                            origin: { x: centerX, y: topY },
+                            startVelocity: 30,
+                            gravity: 1.5,
+                            scalar: 0.8
                         });
 
                         // Stop confetti after 0.2 seconds
