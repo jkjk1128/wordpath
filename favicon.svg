@@ -1,7 +1,4 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-  <!-- White background for contrast -->
-  <rect width="16" height="16" fill="#ffffff"/>
-
   <!-- Top-left dot: black -->
   <circle cx="3" cy="3" r="2" fill="#000000"/>
 
