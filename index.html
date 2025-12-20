@@ -231,15 +231,22 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            gap: 0;
         }
 
-        .attempts-top {
-            width: 100%;
+        .solutions-counter {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #555;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .attempts-dots {
             display: flex;
+            gap: 12px;
             justify-content: center;
-            align-items: center;
-            gap: 30px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .word-path {
@@ -247,9 +254,8 @@
             flex-direction: column;
             align-items: center;
             gap: 15px;
-            position: relative;
-            padding: 30px 0 10px 0;
             width: 100%;
+            margin-bottom: 0;
         }
 
         .word-box {
@@ -310,31 +316,8 @@
             box-shadow: 0 6px 0 #66bb6a !important;
         }
 
-        /* Attempts Box */
-        /* Removed - attempts now in sidebar */
-
-        .attempts-box {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .attempts-label {
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            opacity: 0.7;
-        }
-
-        .attempts-dots {
-            display: flex;
-            gap: 8px;
-        }
-
         .dot {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             transition: all 0.3s;
         }
 
@@ -370,14 +353,6 @@
             width: 100%;
         }
 
-        .solutions-counter {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #555;
-            text-align: center;
-            display: flex;
-            align-items: center;
-        }
 
         .check-btn {
             background: #000;
@@ -663,13 +638,6 @@
 
         /* Mobile Responsive */
         @media (max-width: 768px) {
-            .attempts-top {
-                margin-bottom: 15px;
-                flex-direction: column;
-                align-items: center;
-                gap: 10px;
-            }
-
             h1 {
                 font-size: 2.5rem;
             }
@@ -698,7 +666,7 @@
             }
 
             .word-path {
-                padding: 20px 0;
+                padding: 0;
             }
 
             .word-box,
@@ -827,18 +795,17 @@
 
         <div class="game-container">
             <div class="word-path-container">
-                <div class="attempts-top">
-                    <div class="attempts-box">
-                        <div class="attempts-label">Attempts</div>
-                        <div class="attempts-dots" id="attempts-display">
-                            <span class="dot" id="dot1">●</span>
-                            <span class="dot" id="dot2">●</span>
-                            <span class="dot" id="dot3">●</span>
-                        </div>
-                    </div>
-                    <div class="solutions-counter" id="solutions-counter">Solutions Found: 0 / 0</div>
+                <!-- Solutions Found: centered above dots -->
+                <div class="solutions-counter" id="solutions-counter">Solutions Found: 0 / 0</div>
+
+                <!-- Three dots: directly above first word box -->
+                <div class="attempts-dots" id="attempts-display">
+                    <span class="dot" id="dot1">●</span>
+                    <span class="dot" id="dot2">●</span>
+                    <span class="dot" id="dot3">●</span>
                 </div>
 
+                <!-- Word boxes: all centered -->
                 <div class="word-path" id="word-path">
                     <div class="word-box" id="start-word">COLD</div>
                     <input type="text" class="word-input" id="word1" maxlength="4" placeholder="____">
@@ -847,11 +814,13 @@
                     <div class="word-box" id="end-word">WARM</div>
                 </div>
 
+                <!-- Check Path button: centered below word boxes -->
                 <div class="controls">
                     <button class="check-btn" id="check-btn">Check Path</button>
                 </div>
             </div>
 
+            <!-- Feedback: positioned to the right, doesn't affect centering -->
             <div class="feedback-area">
                 <div class="message" id="message"></div>
             </div>
