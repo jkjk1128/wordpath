@@ -28,9 +28,10 @@
         }
 
         .container {
-            max-width: 600px;
+            max-width: 900px;
             width: 100%;
             margin: 0 auto;
+            position: relative;
         }
 
         header {
@@ -114,44 +115,36 @@
             box-shadow: 0 3px 0 #52B788;
         }
 
-        /* Tab Navigation */
-        .tabs {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-bottom: 40px;
-            border-bottom: 2px solid #000;
-        }
-
-        .tab {
-            background: transparent;
+        /* Help Button */
+        .help-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #000;
+            color: #FFF7E7;
             border: none;
-            border-bottom: 3px solid transparent;
-            padding: 12px 30px;
-            font-size: 1rem;
-            font-weight: 600;
+            font-size: 1.5rem;
+            font-weight: 700;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: all 0.2s;
-            font-family: 'Inter', sans-serif;
-            color: #000;
-            margin-bottom: -2px;
+            box-shadow: 0 4px 0 #333;
         }
 
-        .tab:hover {
-            background: rgba(0, 0, 0, 0.05);
+        .help-button:hover {
+            background: #333;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #333;
         }
 
-        .tab.active {
-            border-bottom-color: #000;
-        }
-
-        /* Tab Content */
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
+        .help-button:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #333;
         }
 
         /* How to Play Section */
@@ -209,14 +202,22 @@
             letter-spacing: 2px;
         }
 
-        /* Game Area - Centered */
+        /* Game Area - Centered with side message */
         .game-container {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: center;
             justify-content: center;
+            gap: 40px;
             width: 100%;
             margin: 0 auto;
+        }
+
+        .feedback-area {
+            min-width: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .word-path-container {
@@ -409,9 +410,7 @@
             font-weight: 600;
             min-height: 25px;
             text-align: center;
-            max-width: 300px;
-            margin-bottom: 10px;
-            order: -1;
+            max-width: 200px;
         }
 
         .message.error {
@@ -671,6 +670,16 @@
                 font-size: 1rem;
             }
 
+            .game-container {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .feedback-area {
+                min-width: auto;
+                width: 100%;
+            }
+
             .word-path-container {
                 max-width: 350px;
             }
@@ -796,51 +805,47 @@
     </div>
 
     <div class="container">
+        <button class="help-button" id="help-btn" title="How to Play">?</button>
+
         <header>
             <h1>Word Hop</h1>
             <p class="subtitle">Hop from word to word by changing one letter at a time</p>
         </header>
 
-        <!-- Tab Navigation -->
-        <div class="tabs">
-            <button class="tab active" onclick="switchTab('play')">Play</button>
-            <button class="tab" onclick="switchTab('how-to-play')">How to Play</button>
-        </div>
-
-        <!-- Play Tab -->
-        <div id="play-tab" class="tab-content active">
-            <div class="game-container">
-                <div class="word-path-container">
-                    <div class="attempts-top">
-                        <div class="attempts-box">
-                            <div class="attempts-label">Attempts</div>
-                            <div class="attempts-dots" id="attempts-display">
-                                <span class="dot" id="dot1">●</span>
-                                <span class="dot" id="dot2">●</span>
-                                <span class="dot" id="dot3">●</span>
-                            </div>
+        <div class="game-container">
+            <div class="word-path-container">
+                <div class="attempts-top">
+                    <div class="attempts-box">
+                        <div class="attempts-label">Attempts</div>
+                        <div class="attempts-dots" id="attempts-display">
+                            <span class="dot" id="dot1">●</span>
+                            <span class="dot" id="dot2">●</span>
+                            <span class="dot" id="dot3">●</span>
                         </div>
                     </div>
-
-                    <div class="word-path" id="word-path">
-                        <div class="word-box" id="start-word">COLD</div>
-                        <input type="text" class="word-input" id="word1" maxlength="4" placeholder="____">
-                        <input type="text" class="word-input" id="word2" maxlength="4" placeholder="____">
-                        <input type="text" class="word-input" id="word3" maxlength="4" placeholder="____">
-                        <div class="word-box" id="end-word">WARM</div>
-                    </div>
-
-                    <div class="controls">
-                        <div class="solutions-counter" id="solutions-counter">Solutions Found: 0 / 0</div>
-                        <div class="message" id="message"></div>
-                        <button class="check-btn" id="check-btn">Check Path</button>
-                    </div>
                 </div>
+
+                <div class="word-path" id="word-path">
+                    <div class="word-box" id="start-word">COLD</div>
+                    <input type="text" class="word-input" id="word1" maxlength="4" placeholder="____">
+                    <input type="text" class="word-input" id="word2" maxlength="4" placeholder="____">
+                    <input type="text" class="word-input" id="word3" maxlength="4" placeholder="____">
+                    <div class="word-box" id="end-word">WARM</div>
+                </div>
+
+                <div class="controls">
+                    <div class="solutions-counter" id="solutions-counter">Solutions Found: 0 / 0</div>
+                    <button class="check-btn" id="check-btn">Check Path</button>
+                </div>
+            </div>
+
+            <div class="feedback-area">
+                <div class="message" id="message"></div>
             </div>
         </div>
 
-        <!-- How to Play Tab -->
-        <div id="how-to-play-tab" class="tab-content">
+        <!-- Hidden How to Play Tab (kept for compatibility) -->
+        <div id="how-to-play-tab" style="display: none;">
             <div class="how-to-play">
                 <h2>How to Play</h2>
 
@@ -2309,6 +2314,15 @@
         function setupTutorial() {
             const tutorialModal = document.getElementById('tutorial-modal');
             const tutorialCloseBtn = document.getElementById('tutorial-close-btn');
+            const helpBtn = document.getElementById('help-btn');
+
+            // Help button handler
+            if (helpBtn) {
+                helpBtn.addEventListener('click', () => {
+                    tutorialModal.style.display = 'flex';
+                    animateTutorialDemo();
+                });
+            }
 
             // Close button handler
             tutorialCloseBtn.addEventListener('click', () => {
