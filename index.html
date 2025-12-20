@@ -237,6 +237,7 @@
             width: 100%;
             display: flex;
             justify-content: center;
+            gap: 20px;
             margin-bottom: 20px;
         }
 
@@ -368,11 +369,14 @@
         }
 
         .solutions-counter {
-            text-align: center;
-            font-size: 0.95rem;
+            padding: 10px 20px;
+            border: 2px solid #000;
+            border-radius: 8px;
+            background: #fff;
+            font-size: 0.85rem;
             font-weight: 600;
             color: #555;
-            margin-bottom: 10px;
+            text-align: center;
         }
 
         .check-btn {
@@ -660,6 +664,9 @@
         @media (max-width: 768px) {
             .attempts-top {
                 margin-bottom: 15px;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
             }
 
             h1 {
@@ -833,6 +840,7 @@
                             <span class="dot" id="dot3">●</span>
                         </div>
                     </div>
+                    <div class="solutions-counter" id="solutions-counter">Solutions Found: 0 / 0</div>
                 </div>
 
                 <div class="word-path" id="word-path">
@@ -844,7 +852,6 @@
                 </div>
 
                 <div class="controls">
-                    <div class="solutions-counter" id="solutions-counter">Solutions Found: 0 / 0</div>
                     <button class="check-btn" id="check-btn">Check Path</button>
                 </div>
             </div>
