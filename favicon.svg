@@ -1,7 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <!-- Black background box -->
-  <rect width="32" height="32" fill="#000000" rx="4"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
+  <!-- White background for contrast -->
+  <rect width="16" height="16" fill="#ffffff"/>
 
-  <!-- White W using Georgia font (serif) -->
-  <text x="16" y="25" font-family="Georgia, serif" font-size="24" font-weight="700" fill="#ffffff" text-anchor="middle">W</text>
+  <!-- Top-left dot: black -->
+  <circle cx="3" cy="3" r="2" fill="#000000"/>
+
+  <!-- Middle dot: light green (the "hop") -->
+  <circle cx="8" cy="8" r="2" fill="#10B981"/>
+
+  <!-- Bottom-right dot: black -->
+  <circle cx="13" cy="13" r="2" fill="#000000"/>
 </svg>
