@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" fill="#ffffff"/>
+  <!-- Letter W -->
+  <path d="M 6 8 L 8.5 20 L 11 8 L 13.5 20 L 16 8 L 18 8 L 14 24 L 11 24 L 8.5 15 L 6 24 L 3 24 L -1 8 Z" fill="#000000" transform="translate(5, 0)"/>
+  <!-- Arc over the W -->
+  <path d="M 8 12 Q 16 4 24 12" stroke="#667eea" stroke-width="3" fill="none" stroke-linecap="round"/>
+</svg>
