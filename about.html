@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Word Hop</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'GA_MEASUREMENT_ID');
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #FFF7E7;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .content {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            border: 2px solid #000;
+            line-height: 1.8;
+        }
+
+        .content h2 {
+            font-size: 1.5rem;
+            margin: 30px 0 15px 0;
+            color: #333;
+        }
+
+        .content h2:first-child {
+            margin-top: 0;
+        }
+
+        .content p {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .content ul {
+            margin: 15px 0 15px 30px;
+            color: #333;
+        }
+
+        .content li {
+            margin-bottom: 10px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 30px;
+            background: #95D5B2;
+            color: #000;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            border: 2px solid #000;
+            transition: all 0.2s;
+            box-shadow: 0 4px 0 #74C69D;
+        }
+
+        .back-link:hover {
+            background: #74C69D;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #52B788;
+        }
+
+        .back-link:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #52B788;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            opacity: 0.6;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .content {
+                padding: 30px 25px;
+            }
+
+            body {
+                padding: 30px 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.75rem;
+            }
+
+            .content {
+                padding: 25px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>About Word Hop</h1>
+
+        <div class="content">
+            <h2>What is Word Hop?</h2>
+            <p>Word Hop is a daily word puzzle game that challenges your vocabulary and problem-solving skills. Each day brings a new puzzle where you connect two words by changing one letter at a time.</p>
+
+            <h2>How to Play</h2>
+            <p>The goal is simple but engaging:</p>
+            <ul>
+                <li>Start with the first word (e.g., COLD)</li>
+                <li>Change exactly one letter at a time to create valid English words</li>
+                <li>Continue until you reach the target word (e.g., WARM)</li>
+                <li>Complete the puzzle in as few steps as possible</li>
+            </ul>
+            <p><strong>Example path:</strong> COLD → CORD → CARD → WARD → WARM</p>
+
+            <h2>Features</h2>
+            <ul>
+                <li><strong>Daily Puzzles:</strong> A new challenge every day at midnight</li>
+                <li><strong>Multiple Solutions:</strong> Many puzzles have several valid paths</li>
+                <li><strong>Three Attempts:</strong> You get three tries to find a solution</li>
+                <li><strong>No Registration:</strong> Play instantly without creating an account</li>
+            </ul>
+
+            <h2>Purpose</h2>
+            <p>Word Hop is designed for entertainment and educational purposes. It's a fun way to expand your vocabulary, practice spelling, and exercise your brain with daily word puzzles. Whether you're a word game enthusiast or just looking for a quick mental challenge, Word Hop offers engaging gameplay for all skill levels.</p>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="index.html" class="back-link">Play Word Hop</a>
+            </div>
+        </div>
+
+        <footer>
+            &copy; 2025 Word Hop. All rights reserved.
+        </footer>
+    </div>
+</body>
+</html>

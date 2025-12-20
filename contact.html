@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - Word Hop</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'GA_MEASUREMENT_ID');
+    </script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #FFF7E7;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .content {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            border: 2px solid #000;
+            line-height: 1.8;
+        }
+
+        .content h2 {
+            font-size: 1.5rem;
+            margin: 30px 0 15px 0;
+            color: #333;
+        }
+
+        .content h2:first-child {
+            margin-top: 0;
+        }
+
+        .content p {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .content ul {
+            margin: 15px 0 15px 30px;
+            color: #333;
+        }
+
+        .content li {
+            margin-bottom: 10px;
+        }
+
+        .email {
+            display: inline-block;
+            padding: 15px 25px;
+            background: #f5f5f5;
+            border: 2px solid #000;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #667eea;
+            text-decoration: none;
+            margin: 10px 0;
+            transition: background 0.2s;
+        }
+
+        .email:hover {
+            background: #e8e8e8;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 30px;
+            background: #95D5B2;
+            color: #000;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            border: 2px solid #000;
+            transition: all 0.2s;
+            box-shadow: 0 4px 0 #74C69D;
+        }
+
+        .back-link:hover {
+            background: #74C69D;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 #52B788;
+        }
+
+        .back-link:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #52B788;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            opacity: 0.6;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .content {
+                padding: 30px 25px;
+            }
+
+            body {
+                padding: 30px 15px;
+            }
+
+            .email {
+                font-size: 1rem;
+                padding: 12px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.75rem;
+            }
+
+            .content {
+                padding: 25px 20px;
+            }
+
+            .email {
+                font-size: 0.95rem;
+                padding: 10px 15px;
+                word-break: break-all;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Contact Us</h1>
+
+        <div class="content">
+            <h2>Get in Touch</h2>
+            <p>We'd love to hear from you! Whether you have questions, feedback, or found a bug, feel free to reach out.</p>
+
+            <p style="text-align: center; margin: 25px 0;">
+                <a href="mailto:contact@playwordhop.com" class="email">contact@playwordhop.com</a>
+            </p>
+
+            <h2>What We'd Like to Hear About</h2>
+            <ul>
+                <li><strong>Bug Reports:</strong> Found something not working as expected? Let us know so we can fix it.</li>
+                <li><strong>Feedback:</strong> Have suggestions for improving the game? We're always looking to make Word Hop better.</li>
+                <li><strong>Questions:</strong> Need help understanding how something works? Ask away.</li>
+                <li><strong>General Inquiries:</strong> Anything else related to Word Hop.</li>
+            </ul>
+
+            <h2>Response Time</h2>
+            <p>We typically respond to emails within 1-3 business days. During busy periods, it may take a bit longer, but we'll do our best to get back to you as soon as possible.</p>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="index.html" class="back-link">Play Word Hop</a>
+            </div>
+        </div>
+
+        <footer>
+            &copy; 2025 Word Hop. All rights reserved.
+        </footer>
+    </div>
+</body>
+</html>

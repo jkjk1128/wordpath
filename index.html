@@ -628,6 +628,27 @@
             font-weight: 700;
         }
 
+        .footer-links {
+            margin-top: 15px;
+            font-size: 0.85rem;
+        }
+
+        .footer-links a {
+            color: #667eea;
+            text-decoration: none;
+            transition: opacity 0.2s;
+            margin: 0 8px;
+        }
+
+        .footer-links a:hover {
+            opacity: 0.7;
+        }
+
+        .footer-links .separator {
+            color: #999;
+            margin: 0 5px;
+        }
+
         /* Mobile Responsive */
         @media (max-width: 768px) {
             h1 {
@@ -722,8 +743,27 @@
                 padding: 10px 20px;
                 font-size: 0.9rem;
             }
+
+            .footer-links {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .footer-links .separator {
+                display: none;
+            }
         }
     </style>
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'GA_MEASUREMENT_ID');
+    </script>
 </head>
 <body>
     <!-- Landing Page -->
@@ -880,6 +920,12 @@
             <div>Daily Puzzle</div>
             <div class="countdown">
                 Next puzzle in <span class="countdown-timer" id="countdown-timer">--:--:--</span>
+            </div>
+            <div class="footer-links">
+                <a href="about.html">About</a><span class="separator">|</span>
+                <a href="contact.html">Contact</a><span class="separator">|</span>
+                <a href="privacy.html">Privacy Policy</a><span class="separator">|</span>
+                <a href="terms.html">Terms of Service</a>
             </div>
         </footer>
     </div>
