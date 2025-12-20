@@ -3,7 +3,7 @@
   <circle cx="3" cy="3" r="2" fill="#000000"/>
 
   <!-- Middle dot: pastel green (the "hop") -->
-  <circle cx="8" cy="8" r="2" fill="#86EFAC"/>
+  <circle cx="8" cy="8" r="2" fill="#95D5B2"/>
 
   <!-- Bottom-right dot: black -->
   <circle cx="13" cy="13" r="2" fill="#000000"/>
