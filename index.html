@@ -2206,17 +2206,36 @@
                     const demoEndBox = document.getElementById('demo-end-box');
                     demoEndBox.classList.add('demo-green');
 
-                    // Trigger confetti
+                    // Trigger confetti from sides of tutorial box
                     if (typeof confetti !== 'undefined') {
+                        const tutorialContent = document.querySelector('.tutorial-content');
+                        const rect = tutorialContent.getBoundingClientRect();
+                        const centerY = (rect.top + rect.height / 2) / window.innerHeight;
+                        const leftX = rect.left / window.innerWidth;
+                        const rightX = rect.right / window.innerWidth;
+
+                        // Confetti from left side
                         confetti({
-                            particleCount: 100,
-                            spread: 70,
-                            origin: { y: 0.6 }
+                            particleCount: 50,
+                            angle: 60,
+                            spread: 55,
+                            origin: { x: leftX, y: centerY },
+                            startVelocity: 45
                         });
-                        // Stop confetti after 0.3 seconds
+
+                        // Confetti from right side
+                        confetti({
+                            particleCount: 50,
+                            angle: 120,
+                            spread: 55,
+                            origin: { x: rightX, y: centerY },
+                            startVelocity: 45
+                        });
+
+                        // Stop confetti after 0.2 seconds
                         setTimeout(() => {
                             confetti.reset();
-                        }, 300);
+                        }, 200);
                     }
                 }},
 
