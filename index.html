@@ -585,6 +585,12 @@
             animation: highlight 0.5s;
         }
 
+        .demo-box.demo-green {
+            background-color: #c8e6c9 !important;
+            border-color: #81c784 !important;
+            box-shadow: 0 4px 0 #66bb6a !important;
+        }
+
         @keyframes pulse {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.05); }
@@ -598,26 +604,23 @@
         .tutorial-close-btn {
             background: #95D5B2;
             color: white;
-            border: 3px solid #000;
+            border: none;
             border-radius: 50px;
             padding: 15px 40px;
             font-size: 1.1rem;
             font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 4px 0 #000;
             transition: all 0.2s;
             margin-top: 20px;
             width: 100%;
         }
 
         .tutorial-close-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 0 #000;
+            background: #74C69D;
         }
 
         .tutorial-close-btn:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px 0 #000;
+            background: #52B788;
         }
 
         footer {
@@ -752,26 +755,26 @@
                 <div class="demo-label">Example</div>
 
                 <div style="display: flex; flex-direction: column; gap: 8px; margin: 20px auto; max-width: 200px;">
-                    <div style="padding: 10px; background: #e8e8e8; border: 2px solid #999; border-radius: 8px; font-size: 1.2rem; font-weight: 700; letter-spacing: 2px; text-align: center;">
+                    <div id="demo-start-box" class="demo-box" style="padding: 10px; background: #e8e8e8; border: 2px solid #999; border-radius: 8px; font-size: 1.2rem; font-weight: 700; letter-spacing: 2px; text-align: center; transition: all 0.3s ease;">
                         COLD
                     </div>
 
                     <div style="position: relative;">
-                        <input type="text" class="demo-input" id="demo-input-1" maxlength="4" readonly value="" style="width: 100%; margin: 0; padding: 10px; font-size: 1.2rem;">
+                        <input type="text" class="demo-input demo-box" id="demo-input-1" maxlength="4" readonly value="" style="width: 100%; margin: 0; padding: 10px; font-size: 1.2rem; transition: all 0.3s ease;">
                         <div id="demo-highlight-1" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; font-weight: 700; letter-spacing: 4px; pointer-events: none; display: none;"></div>
                     </div>
 
                     <div style="position: relative;">
-                        <input type="text" class="demo-input" id="demo-input-2" maxlength="4" readonly value="" style="width: 100%; margin: 0; padding: 10px; font-size: 1.2rem;">
+                        <input type="text" class="demo-input demo-box" id="demo-input-2" maxlength="4" readonly value="" style="width: 100%; margin: 0; padding: 10px; font-size: 1.2rem; transition: all 0.3s ease;">
                         <div id="demo-highlight-2" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; font-weight: 700; letter-spacing: 4px; pointer-events: none; display: none;"></div>
                     </div>
 
                     <div style="position: relative;">
-                        <input type="text" class="demo-input" id="demo-input-3" maxlength="4" readonly value="" style="width: 100%; margin: 0; padding: 10px; font-size: 1.2rem;">
+                        <input type="text" class="demo-input demo-box" id="demo-input-3" maxlength="4" readonly value="" style="width: 100%; margin: 0; padding: 10px; font-size: 1.2rem; transition: all 0.3s ease;">
                         <div id="demo-highlight-3" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; font-weight: 700; letter-spacing: 4px; pointer-events: none; display: none;"></div>
                     </div>
 
-                    <div style="padding: 10px; background: #e8e8e8; border: 2px solid #999; border-radius: 8px; font-size: 1.2rem; font-weight: 700; letter-spacing: 2px; text-align: center; position: relative;">
+                    <div id="demo-end-box" class="demo-box" style="padding: 10px; background: #e8e8e8; border: 2px solid #999; border-radius: 8px; font-size: 1.2rem; font-weight: 700; letter-spacing: 2px; text-align: center; position: relative; transition: all 0.3s ease;">
                         <span id="demo-end-word">WARM</span>
                         <span id="demo-highlight-end" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; font-weight: 700; letter-spacing: 2px; pointer-events: none; display: none;"></span>
                     </div>
@@ -2182,11 +2185,39 @@
                     highlight3.innerHTML = '<span class="demo-letter-highlight">WAR</span>D';
                 }},
 
-                // Animate WARM with all letters highlighted
-                { delay: 5000, action: () => {
-                    endWord.style.opacity = '0';
-                    highlightEnd.innerHTML = '<span class="demo-letter-highlight">WARM</span>';
-                    highlightEnd.style.display = 'inline';
+                // Fill all boxes green sequentially (like the game)
+                { delay: 4500, action: () => {
+                    const demoStartBox = document.getElementById('demo-start-box');
+                    demoStartBox.classList.add('demo-green');
+                }},
+                { delay: 4700, action: () => {
+                    const demoInput1 = document.getElementById('demo-input-1');
+                    demoInput1.classList.add('demo-green');
+                }},
+                { delay: 4900, action: () => {
+                    const demoInput2 = document.getElementById('demo-input-2');
+                    demoInput2.classList.add('demo-green');
+                }},
+                { delay: 5100, action: () => {
+                    const demoInput3 = document.getElementById('demo-input-3');
+                    demoInput3.classList.add('demo-green');
+                }},
+                { delay: 5300, action: () => {
+                    const demoEndBox = document.getElementById('demo-end-box');
+                    demoEndBox.classList.add('demo-green');
+
+                    // Trigger confetti
+                    if (typeof confetti !== 'undefined') {
+                        confetti({
+                            particleCount: 100,
+                            spread: 70,
+                            origin: { y: 0.6 }
+                        });
+                        // Stop confetti after 0.3 seconds
+                        setTimeout(() => {
+                            confetti.reset();
+                        }, 300);
+                    }
                 }},
 
                 // Reset for loop
@@ -2199,6 +2230,11 @@
                     highlight3.style.display = 'none';
                     highlightEnd.style.display = 'none';
                     endWord.style.opacity = '1';
+
+                    // Remove green classes
+                    document.querySelectorAll('.demo-box').forEach(box => {
+                        box.classList.remove('demo-green');
+                    });
                 }}
             ];
 
