@@ -115,36 +115,28 @@
             box-shadow: 0 3px 0 #52B788;
         }
 
-        /* Help Button */
+        /* Help Button - Minimalist Question Mark */
         .help-button {
             position: absolute;
             top: 20px;
             right: 20px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #000;
-            color: #FFF7E7;
+            background: none;
             border: none;
-            font-size: 1.5rem;
-            font-weight: 700;
+            color: #555;
+            font-size: 1.8rem;
+            font-weight: 600;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-            box-shadow: 0 4px 0 #333;
+            padding: 5px;
+            line-height: 1;
+            transition: opacity 0.2s;
         }
 
         .help-button:hover {
-            background: #333;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 0 #333;
+            opacity: 0.7;
         }
 
         .help-button:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px 0 #333;
+            opacity: 0.5;
         }
 
         /* How to Play Section */
@@ -2125,7 +2117,54 @@
         }
 
         // Tutorial functionality
-        function animateTutorialDemo() {
+        let tutorialAnimationTimeouts = [];
+        let tutorialAnimationRunning = false;
+
+        function resetTutorialAnimation() {
+            // Clear all pending timeouts
+            tutorialAnimationTimeouts.forEach(timeout => clearTimeout(timeout));
+            tutorialAnimationTimeouts = [];
+            tutorialAnimationRunning = false;
+
+            // Reset all demo elements to initial state
+            const input1 = document.getElementById('demo-input-1');
+            const input2 = document.getElementById('demo-input-2');
+            const input3 = document.getElementById('demo-input-3');
+            const highlight1 = document.getElementById('demo-highlight-1');
+            const highlight2 = document.getElementById('demo-highlight-2');
+            const highlight3 = document.getElementById('demo-highlight-3');
+            const endWord = document.getElementById('demo-end-word');
+            const highlightEnd = document.getElementById('demo-highlight-end');
+
+            if (input1) {
+                input1.value = '';
+                input1.classList.remove('typing');
+            }
+            if (input2) {
+                input2.value = '';
+                input2.classList.remove('typing');
+            }
+            if (input3) {
+                input3.value = '';
+                input3.classList.remove('typing');
+            }
+            if (highlight1) highlight1.style.display = 'none';
+            if (highlight2) highlight2.style.display = 'none';
+            if (highlight3) highlight3.style.display = 'none';
+            if (highlightEnd) highlightEnd.style.display = 'none';
+            if (endWord) endWord.style.opacity = '1';
+
+            // Remove green classes
+            document.querySelectorAll('.demo-box').forEach(box => {
+                box.classList.remove('demo-green');
+            });
+        }
+
+        function animateTutorialDemo(shouldLoop = false) {
+            // Reset any existing animation
+            resetTutorialAnimation();
+            tutorialAnimationRunning = true;
+
             const input1 = document.getElementById('demo-input-1');
             const input2 = document.getElementById('demo-input-2');
             const input3 = document.getElementById('demo-input-3');
@@ -2260,16 +2299,24 @@
             let currentStep = 0;
 
             function runSequence() {
+                if (!tutorialAnimationRunning) return; // Stop if animation was cancelled
+
                 if (currentStep < sequence.length) {
-                    setTimeout(() => {
+                    const timeout = setTimeout(() => {
+                        if (!tutorialAnimationRunning) return; // Check again before executing
                         sequence[currentStep].action();
                         currentStep++;
                         runSequence();
                     }, sequence[currentStep].delay - (sequence[currentStep - 1]?.delay || 0));
-                } else {
-                    // Loop the animation
+                    tutorialAnimationTimeouts.push(timeout);
+                } else if (shouldLoop) {
+                    // Loop the animation only if shouldLoop is true (initial tutorial)
                     currentStep = 0;
-                    setTimeout(runSequence, 1000);
+                    const timeout = setTimeout(runSequence, 1000);
+                    tutorialAnimationTimeouts.push(timeout);
+                } else {
+                    // Animation complete, not looping
+                    tutorialAnimationRunning = false;
                 }
             }
 
@@ -2287,8 +2334,8 @@
                 // Show tutorial modal
                 tutorialModal.style.display = 'flex';
 
-                // Start animation
-                setTimeout(animateTutorialDemo, 500);
+                // Start animation (with looping)
+                setTimeout(() => animateTutorialDemo(true), 500);
 
                 // Mark as seen
                 // localStorage.setItem('hasSeenTutorial', 'true');
