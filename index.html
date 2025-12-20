@@ -362,6 +362,14 @@
             margin-top: -20px;
         }
 
+        .solutions-counter {
+            text-align: center;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
         .check-btn {
             background: #000;
             color: #FFF7E7;
@@ -402,6 +410,8 @@
             min-height: 25px;
             text-align: center;
             max-width: 300px;
+            margin-bottom: 10px;
+            order: -1;
         }
 
         .message.error {
@@ -821,6 +831,7 @@
                     </div>
 
                     <div class="controls">
+                        <div class="solutions-counter" id="solutions-counter">Solutions Found: 0 / 0</div>
                         <div class="message" id="message"></div>
                         <button class="check-btn" id="check-btn">Check Path</button>
                     </div>
@@ -1596,6 +1607,16 @@
             }
         }
 
+        // Update solutions counter
+        function updateSolutionsCounter() {
+            const counterEl = document.getElementById('solutions-counter');
+            if (counterEl) {
+                const totalSolutions = currentPuzzleSolutions.length;
+                const foundCount = foundSolutions.length;
+                counterEl.textContent = `Solutions Found: ${foundCount} / ${totalSolutions}`;
+            }
+        }
+
         // Update dots display
         function updateAttemptsDisplay() {
             const dotsUsed = 3 - attemptsRemaining;
@@ -1630,19 +1651,17 @@
             document.getElementById('start-word').textContent = currentPuzzle.start.toUpperCase();
             document.getElementById('end-word').textContent = currentPuzzle.end.toUpperCase();
 
-            // ✅ NO LONGER NEEDED: We accept ANY valid path, not just predefined solutions
-            // Computing all solutions is computationally expensive and unnecessary
+            // Calculate all possible solutions
             console.log(`Today's puzzle: ${currentPuzzle.start.toUpperCase()} → ${currentPuzzle.end.toUpperCase()}`);
-            console.log(`✅ Game accepts ANY valid path following the rules!`);
-            console.log(`✅ CRITICAL BUG FIX: The game now accepts ALL valid English words that follow the rules.`);
-            console.log(`   - Valid words are checked against the VALID_WORDS dictionary`);
-            console.log(`   - Each word must differ by exactly ONE letter from the previous word`);
-            console.log(`   - No word can be used twice in the same path`);
-            console.log(`   - Example: FORK → PORK is now accepted (if valid path exists)`);
-            currentPuzzleSolutions = []; // Not used anymore, but keep variable to avoid breaking references
+            console.log(`Calculating all possible solutions...`);
+            currentPuzzleSolutions = findAllPaths(currentPuzzle.start, currentPuzzle.end);
+            console.log(`Found ${currentPuzzleSolutions.length} possible solution(s)`);
 
             // Reset found solutions tracker
             foundSolutions = [];
+
+            // Update solutions counter
+            updateSolutionsCounter();
 
             // Reset inputs
             document.getElementById('word1').value = '';
@@ -1829,6 +1848,7 @@
             // ✅ SUCCESS! The path is valid and follows all rules
             // Add to found solutions
             foundSolutions.push(userSolution);
+            updateSolutionsCounter();
 
             showMessage('Perfect! You solved it!', 'success');
 
@@ -1841,12 +1861,11 @@
             // Start the sequential green animation
             glowPath();
 
-            // ✅ Player can keep finding new solutions (infinite valid paths possible)
-            const hasMoreSolutions = true; // Always allow players to find more paths
+            // Check if there are more solutions to find
+            const hasMoreSolutions = foundSolutions.length < currentPuzzleSolutions.length;
 
             setTimeout(() => {
                 showSuccessScreen(userSolution, hasMoreSolutions);
-                // Never end the game - players can always try to find more paths
             }, 1500);
         }
 
