@@ -1789,8 +1789,11 @@
         // Find all valid paths of exactly N steps from start to end using DFS
         function findAllPaths(startWord, endWord, pathLength = 4) {
             const allPaths = [];
+            let exploredCount = 0;
 
             function dfs(currentWord, path, depth) {
+                exploredCount++;
+
                 // If we've taken the required number of steps
                 if (depth === pathLength) {
                     // Check if we reached the end
@@ -1798,6 +1801,7 @@
                         // Store the intermediary words (exclude start at index 0 and end at last index)
                         const intermediaryWords = path.slice(1, path.length - 1);
                         allPaths.push(intermediaryWords);
+                        console.log(`  ✓ Found solution #${allPaths.length}: ${[startWord, ...intermediaryWords, endWord].map(w => w.toUpperCase()).join(' → ')}`);
                     }
                     return;
                 }
@@ -1812,7 +1816,10 @@
                 }
             }
 
+            console.log(`🔍 Searching for all ${pathLength}-step paths from ${startWord.toUpperCase()} to ${endWord.toUpperCase()}...`);
             dfs(startWord, [startWord], 0);
+            console.log(`  📊 Explored ${exploredCount} nodes, found ${allPaths.length} solution(s)`);
+
             return allPaths;
         }
 
@@ -2156,6 +2163,17 @@
             console.log(`Calculating all possible solutions...`);
             currentPuzzleSolutions = findAllPaths(currentPuzzle.start, currentPuzzle.end);
             console.log(`✅ Found ${currentPuzzleSolutions.length} possible solution(s)\n`);
+
+            // DEBUG: Test word neighbors for tank→sell path
+            if (currentPuzzle.start === 'tank' && currentPuzzle.end === 'sell') {
+                console.log('🔍 DEBUG: Testing TANK→SELL puzzle neighbors:');
+                console.log('  Neighbors of TANK:', findNeighbors('tank').join(', '));
+                console.log('  Neighbors of TALK:', findNeighbors('talk').join(', '));
+                console.log('  Neighbors of TALL:', findNeighbors('tall').join(', '));
+                console.log('  Neighbors of TALE:', findNeighbors('tale').join(', '));
+                console.log('  Neighbors of TELL:', findNeighbors('tell').join(', '));
+                console.log('');
+            }
 
             // Reset found solutions tracker
             foundSolutions = [];
