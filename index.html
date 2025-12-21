@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Word Hop</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Arial Rounded MT Bold is a system font, no external import needed -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
     <style>
         * {
@@ -17,7 +15,7 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Arial Rounded MT Bold', 'Helvetica Rounded', 'Arial', sans-serif;
             background-color: #FFF7E7;
             color: #000;
             min-height: 100vh;
@@ -79,13 +77,13 @@
         .landing-subtitle {
             font-size: 1.2rem;
             opacity: 0.7;
-            margin-bottom: 10px;
+            margin-bottom: 40px;
         }
 
         .landing-date {
-            font-size: 1rem;
-            opacity: 0.6;
-            margin-bottom: 50px;
+            font-size: 0.9rem;
+            color: #999;
+            margin-top: 20px;
         }
 
         .play-btn {
@@ -98,7 +96,7 @@
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Arial Rounded MT Bold', 'Helvetica Rounded', 'Arial', sans-serif;
             box-shadow: 0 6px 0 #74C69D;
             text-transform: uppercase;
             letter-spacing: 2px;
@@ -278,7 +276,7 @@
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 4px;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Arial Rounded MT Bold', 'Helvetica Rounded', 'Arial', sans-serif;
             outline: none;
             transition: all 0.2s;
             box-shadow: 0 4px 0 #000;
@@ -356,7 +354,7 @@
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Arial Rounded MT Bold', 'Helvetica Rounded', 'Arial', sans-serif;
             box-shadow: 0 4px 0 #333;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -735,11 +733,17 @@
             .landing-subtitle {
                 font-size: 0.9rem;
                 padding: 0 20px;
+                margin-bottom: 30px;
             }
 
             .play-btn {
                 padding: 15px 60px;
                 font-size: 1.2rem;
+            }
+
+            .landing-date {
+                font-size: 0.8rem;
+                margin-top: 15px;
             }
 
             .word-path-container {
@@ -969,8 +973,8 @@
     <div class="landing-page" id="landing-page">
         <h1 class="landing-title">Word Hop</h1>
         <p class="landing-subtitle">Hop from word to word by changing one letter at a time</p>
-        <p class="landing-date" id="landing-date">December 1, 2025</p>
         <button class="play-btn" id="play-btn-landing">Play</button>
+        <p class="landing-date" id="landing-date">Saturday, December 21, 2025</p>
     </div>
 
     <!-- Tutorial Modal -->
@@ -2403,9 +2407,9 @@
             const playBtn = document.getElementById('play-btn-landing');
             const landingDate = document.getElementById('landing-date');
 
-            // Set current date
+            // Set current date with day of the week
             const now = new Date();
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             landingDate.textContent = now.toLocaleDateString('en-US', options);
 
             // Hide landing page when play is clicked
