@@ -462,6 +462,30 @@
             font-size: 1.1rem;
         }
 
+        /* Success popup button container */
+        .success-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        /* Share button styling */
+        .share-btn {
+            background: #3B82F6; /* Blue color to differentiate from green Keep Playing */
+            box-shadow: 0 6px 0 #1E40AF; /* Darker blue shadow */
+        }
+
+        .share-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 0 #1E40AF;
+        }
+
+        .share-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #1E40AF;
+        }
+
         /* Tutorial Modal */
         .tutorial-modal {
             position: fixed;
@@ -752,6 +776,16 @@
 
             .footer-links .separator {
                 display: none;
+            }
+
+            .success-buttons {
+                gap: 10px;
+                margin-top: 20px;
+            }
+
+            .share-btn {
+                padding: 12px 40px;
+                font-size: 1rem;
             }
         }
 
@@ -1082,8 +1116,13 @@
             <h2 id="success-title">Excellent!</h2>
             <p id="success-subtitle">You solved today's puzzle!</p>
             <div class="solution" id="success-path"></div>
-            <button class="play-btn" id="keep-playing-btn" style="margin-top: 25px; padding: 15px 40px; font-size: 1rem; display: none;">Keep Playing</button>
-            <button class="play-btn" id="return-from-success-btn" style="margin-top: 25px; padding: 15px 40px; font-size: 1rem; display: none;">Return to Game</button>
+
+            <!-- Button container for better layout -->
+            <div class="success-buttons">
+                <button class="play-btn share-btn" id="share-btn">Share Results</button>
+                <button class="play-btn" id="keep-playing-btn" style="display: none;">Keep Playing</button>
+                <button class="play-btn" id="return-from-success-btn" style="display: none;">Return to Game</button>
+            </div>
         </div>
     </div>
 
@@ -1554,6 +1593,7 @@
         let foundSolutions = []; // Solutions the user has already found
         let attemptsRemaining = 3;
         let gameOver = false;
+        let gameStartTime = null;  // Track when user starts playing
 
         // Tab switching
         function switchTab(tabName) {
@@ -2263,6 +2303,50 @@
             }
         });
 
+        // Share button handler
+        document.getElementById('share-btn').addEventListener('click', () => {
+            const totalSolutions = currentPuzzleSolutions.length;
+            const foundCount = foundSolutions.length;
+
+            // Calculate elapsed time in seconds
+            const elapsedSeconds = gameStartTime ? Math.floor((Date.now() - gameStartTime) / 1000) : 0;
+
+            // Build share message based on conditions
+            let shareText = '';
+
+            if (totalSolutions === 1) {
+                // Case A: Single solution puzzle
+                shareText = `I solved the Word Hop in ${elapsedSeconds} seconds! 🎯\n\nPlay today's puzzle at playwordhop.com`;
+            } else {
+                // Case B: Multiple solution puzzle
+                const solutionWord = foundCount === 1 ? 'solution' : 'solutions';
+                shareText = `I solved the Word Hop! Found ${foundCount} ${solutionWord} in ${elapsedSeconds} seconds! 🎯\n\nPlay today's puzzle at playwordhop.com`;
+            }
+
+            // Try Web Share API first (mobile), fallback to clipboard
+            if (navigator.share) {
+                navigator.share({
+                    text: shareText
+                }).catch(err => {
+                    // User cancelled share, do nothing
+                    console.log('Share cancelled');
+                });
+            } else {
+                // Fallback: Copy to clipboard
+                navigator.clipboard.writeText(shareText).then(() => {
+                    // Show temporary feedback
+                    const originalText = document.getElementById('share-btn').textContent;
+                    document.getElementById('share-btn').textContent = 'Copied!';
+                    setTimeout(() => {
+                        document.getElementById('share-btn').textContent = originalText;
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy:', err);
+                    alert('Failed to copy to clipboard');
+                });
+            }
+        });
+
         document.getElementById('return-from-gameover-btn').addEventListener('click', () => {
             // Hide game over screen
             document.getElementById('game-over-screen').style.display = 'none';
@@ -2298,6 +2382,7 @@
 
             // Hide landing page when play is clicked
             playBtn.addEventListener('click', () => {
+                gameStartTime = Date.now();  // Start timing
                 landingPage.classList.add('hidden');
 
                 // Show tutorial after landing page
