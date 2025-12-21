@@ -781,8 +781,8 @@
             }
 
             h1 {
-                font-size: 1.5rem; /* Down from 2rem */
-                margin-bottom: 5px; /* Down from 10px */
+                font-size: 1.7rem; /* Increased from 1.5rem for better prominence */
+                margin-bottom: 6px; /* Increased from 5px */
             }
 
             /* Solutions counter */
@@ -807,7 +807,7 @@
             }
 
             .word-path {
-                gap: 8px; /* Down from 15px - saves 28px total */
+                gap: 10px; /* Increased from 8px for better spacing */
                 margin-bottom: 0;
             }
 
@@ -838,9 +838,11 @@
             }
 
             .check-btn {
-                padding: 12px 32px; /* Down from 16px 40px */
+                padding: 12px 20px; /* Match word box horizontal padding */
                 font-size: 0.9rem; /* Down from 1rem */
                 box-shadow: 0 3px 0 #333;
+                width: 130px; /* Match word box max-width */
+                max-width: 130px;
             }
 
             .check-btn:hover {
@@ -857,20 +859,29 @@
 
             /* Footer - significant space saver */
             footer {
-                margin-top: 10px; /* Down from 40px - saves 30px */
-                padding: 8px 20px; /* Down from 15px 30px */
+                margin-top: 15px; /* Increased from 10px to add spacing */
+                padding: 10px 20px; /* Increased from 8px to 10px */
                 font-size: 0.75rem;
             }
 
             .countdown {
-                margin-top: 5px;
+                margin-top: 6px; /* Increased from 5px */
                 font-size: 0.8rem;
             }
 
             .footer-links {
+                display: flex;
+                flex-direction: row; /* Override column from 480px breakpoint */
+                justify-content: center;
+                flex-wrap: wrap; /* Allow wrapping if needed */
                 margin-top: 8px;
                 font-size: 0.7rem;
-                gap: 5px;
+                gap: 3px 8px; /* Vertical gap 3px, horizontal gap 8px */
+            }
+
+            .footer-links .separator {
+                display: inline; /* Override none from 480px breakpoint */
+                margin: 0 4px; /* Small spacing around separators */
             }
 
             /* Help button */
@@ -1047,8 +1058,8 @@
             <div class="footer-links">
                 <a href="about.html">About</a><span class="separator">|</span>
                 <a href="contact.html">Contact</a><span class="separator">|</span>
-                <a href="privacy.html">Privacy Policy</a><span class="separator">|</span>
-                <a href="terms.html">Terms of Service</a>
+                <a href="privacy.html">Privacy</a><span class="separator">|</span>
+                <a href="terms.html">Terms</a>
             </div>
         </footer>
     </div>
