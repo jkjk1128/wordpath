@@ -538,15 +538,6 @@
             text-align: center;
         }
 
-        .demo-label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            opacity: 0.6;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
         .demo-words {
             display: flex;
             align-items: center;
@@ -787,6 +778,45 @@
                 padding: 12px 40px;
                 font-size: 1rem;
             }
+
+            /* Tutorial/Help popup mobile optimization */
+            .tutorial-content {
+                padding: 20px 15px;  /* Reduced from 30px */
+                max-height: 90vh;    /* Slightly increased to use more screen */
+                margin: 10px;        /* Reduced from 20px */
+            }
+
+            .tutorial-content h2 {
+                font-size: 1.4rem;   /* Reduced from 1.6rem */
+                margin-bottom: 10px; /* Reduced from 15px */
+            }
+
+            .tutorial-content p {
+                font-size: 0.85rem !important;  /* Smaller text */
+                line-height: 1.3 !important;
+                margin: 10px 0 !important;
+            }
+
+            .tutorial-demo {
+                padding: 15px 10px;  /* Reduced from 30px 20px */
+                margin: 15px 0;      /* Reduced from 25px 0 */
+            }
+
+            .demo-box {
+                padding: 8px !important;      /* Reduced from 10px */
+                font-size: 1.1rem !important; /* Reduced from 1.2rem */
+            }
+
+            .demo-input {
+                padding: 8px !important;      /* Reduced from 12px */
+                font-size: 1.1rem !important; /* Reduced from 1.3rem */
+            }
+
+            .tutorial-close-btn {
+                margin-top: 15px;    /* Reduced from 20px */
+                padding: 12px 30px;  /* Reduced from 15px 40px */
+                font-size: 1rem;     /* Reduced from 1.1rem */
+            }
         }
 
         /* Ultra-compact mobile layout - fits in 100vh on iPhone */
@@ -948,14 +978,12 @@
         <div class="tutorial-content">
             <h2>How to Play</h2>
 
-            <p style="font-size: 0.95rem; line-height: 1.5; margin: 20px 0; text-align: center;">
+            <p style="font-size: 0.95rem; line-height: 1.4; margin: 15px 0 10px 0; text-align: center;">
                 Connect the first word to the last word by&nbsp;changing<br><strong>one letter at a time</strong>.
             </p>
 
             <div class="tutorial-demo">
-                <div class="demo-label">Example</div>
-
-                <div style="display: flex; flex-direction: column; gap: 8px; margin: 20px auto; max-width: 200px;">
+                <div style="display: flex; flex-direction: column; gap: 8px; margin: 15px auto; max-width: 200px;">
                     <div id="demo-start-box" class="demo-box" style="padding: 10px; background: #e8e8e8; border: 2px solid #999; border-radius: 8px; font-size: 1.2rem; font-weight: 700; letter-spacing: 2px; text-align: center; transition: all 0.3s ease;">
                         COLD
                     </div>
