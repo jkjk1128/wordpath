@@ -1790,9 +1790,14 @@
         function findAllPaths(startWord, endWord, pathLength = 4) {
             const allPaths = [];
             let exploredCount = 0;
+            const debugMode = (startWord === 'tank' && endWord === 'sell'); // Enable detailed logging for tank→sell
 
             function dfs(currentWord, path, depth) {
                 exploredCount++;
+
+                if (debugMode && depth <= 2) {
+                    console.log(`  ${'  '.repeat(depth)}Exploring: ${path.map(w => w.toUpperCase()).join(' → ')} (depth=${depth})`);
+                }
 
                 // If we've taken the required number of steps
                 if (depth === pathLength) {
@@ -1808,6 +1813,13 @@
 
                 // Explore all neighbors
                 const neighbors = findNeighbors(currentWord);
+
+                if (debugMode && depth === 1 && currentWord === 'talk') {
+                    console.log(`  ${'  '.repeat(depth)}  → Neighbors of TALK: ${neighbors.join(', ')}`);
+                    console.log(`  ${'  '.repeat(depth)}  → Exploring TALL? ${!path.includes('tall')}`);
+                    console.log(`  ${'  '.repeat(depth)}  → Exploring TALE? ${!path.includes('tale')}`);
+                }
+
                 for (const neighbor of neighbors) {
                     // Avoid cycles - don't revisit words already in the path
                     if (!path.includes(neighbor)) {
