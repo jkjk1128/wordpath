@@ -1677,6 +1677,12 @@
 
         // Get today's puzzle
         function getTodaysPuzzle() {
+            // Safety check: Ensure we have puzzles
+            if (!DAILY_PUZZLES || DAILY_PUZZLES.length === 0) {
+                console.error('❌ CRITICAL: No puzzles available in DAILY_PUZZLES array');
+                return null;
+            }
+
             // Get current date in ET timezone
             const now = new Date();
             const etDateString = now.toLocaleDateString("en-US", {
@@ -1697,20 +1703,19 @@
             const puzzleIndex = daysSinceReference % DAILY_PUZZLES.length;
             const selectedPuzzle = DAILY_PUZZLES[puzzleIndex];
 
-            // Validate puzzle difficulty (requires exactly 4 steps)
-            if (!isValidPuzzleDifficulty(selectedPuzzle.start, selectedPuzzle.end, 4)) {
-                const pathLength = findShortestPathLength(selectedPuzzle.start, selectedPuzzle.end);
-                console.warn(
-                    `Puzzle ${puzzleIndex} has invalid difficulty:`,
-                    `${selectedPuzzle.start.toUpperCase()} → ${selectedPuzzle.end.toUpperCase()}`,
-                    pathLength === -1 ? '(No path exists)' : `(Shortest path: ${pathLength} steps, required: 4 steps)`
-                );
+            console.log(`📅 Today's puzzle index: ${puzzleIndex} (out of ${DAILY_PUZZLES.length} puzzles)`);
 
-                // Fallback to first puzzle (COLD → WARM), which should be valid
-                console.log('Using fallback puzzle: COLD → WARM');
+            // Safety check: Ensure selected puzzle exists
+            if (!selectedPuzzle) {
+                console.error(`❌ CRITICAL: Puzzle at index ${puzzleIndex} is undefined`);
+                console.log('Using first available puzzle as fallback');
                 return DAILY_PUZZLES[0];
             }
 
+            console.log(`✅ Selected puzzle: ${selectedPuzzle.start.toUpperCase()} → ${selectedPuzzle.end.toUpperCase()}`);
+
+            // After filtering, all puzzles in DAILY_PUZZLES are already validated
+            // No need to re-validate, just return the selected puzzle
             return selectedPuzzle;
         }
 
@@ -2135,14 +2140,22 @@
         // Initialize game
         function initGame() {
             currentPuzzle = getTodaysPuzzle();
+
+            // Safety check: Ensure we got a valid puzzle
+            if (!currentPuzzle) {
+                console.error('❌ FATAL: Cannot initialize game - no puzzle available');
+                alert('Error: No puzzle available. Please refresh the page.');
+                return;
+            }
+
             document.getElementById('start-word').textContent = currentPuzzle.start.toUpperCase();
             document.getElementById('end-word').textContent = currentPuzzle.end.toUpperCase();
 
             // Calculate all possible solutions
-            console.log(`Today's puzzle: ${currentPuzzle.start.toUpperCase()} → ${currentPuzzle.end.toUpperCase()}`);
+            console.log(`\n🎮 Today's puzzle: ${currentPuzzle.start.toUpperCase()} → ${currentPuzzle.end.toUpperCase()}`);
             console.log(`Calculating all possible solutions...`);
             currentPuzzleSolutions = findAllPaths(currentPuzzle.start, currentPuzzle.end);
-            console.log(`Found ${currentPuzzleSolutions.length} possible solution(s)`);
+            console.log(`✅ Found ${currentPuzzleSolutions.length} possible solution(s)\n`);
 
             // Reset found solutions tracker
             foundSolutions = [];
@@ -2927,11 +2940,30 @@
         window.validatePuzzle = validatePuzzlePair;
 
         // Initialize on load
-        // CRITICAL: Filter out invalid puzzles - ONLY valid puzzles will be used
-        const validPuzzleCount = validateAndFilterPuzzles();
+        try {
+            console.log('🚀 Initializing Word Hop...');
 
-        if (validPuzzleCount === 0) {
-            // NO VALID PUZZLES - Cannot start game
+            // CRITICAL: Filter out invalid puzzles - ONLY valid puzzles will be used
+            const validPuzzleCount = validateAndFilterPuzzles();
+
+            if (validPuzzleCount === 0) {
+                // NO VALID PUZZLES - Cannot start game
+                throw new Error('No valid puzzles available after filtering');
+            }
+
+            // Proceed with game initialization using ONLY valid puzzles
+            console.log(`\n🎮 Starting game with ${validPuzzleCount} validated solvable puzzles\n`);
+            setupLandingPage();
+            setupTutorial();
+            initGame();
+            updateCountdown();
+            setInterval(updateCountdown, 1000); // Update countdown every second
+
+            console.log('✅ Word Hop initialized successfully!\n');
+
+        } catch (error) {
+            // FATAL ERROR - Display error screen
+            console.error('❌ FATAL ERROR during initialization:', error);
             document.body.innerHTML = `
                 <div style="
                     position: fixed;
@@ -2949,28 +2981,27 @@
                     font-family: Arial, sans-serif;
                     text-align: center;
                 ">
-                    <h1 style="font-size: 3rem; margin-bottom: 20px;">🚫 NO VALID PUZZLES</h1>
-                    <h2 style="font-size: 1.5rem; margin-bottom: 20px;">Game Cannot Start</h2>
+                    <h1 style="font-size: 3rem; margin-bottom: 20px;">🚫 ERROR</h1>
+                    <h2 style="font-size: 1.5rem; margin-bottom: 20px;">Game Cannot Load</h2>
                     <p style="font-size: 1.2rem; max-width: 800px; line-height: 1.6;">
-                        All puzzles have been filtered out due to validation failures.
+                        ${error.message || 'An error occurred during initialization'}
                         <br><br>
                         <strong>Check the browser console for details.</strong>
                         <br><br>
-                        Please add valid word pairs to the puzzle array.
+                        <button onclick="location.reload()" style="
+                            padding: 15px 40px;
+                            font-size: 1.1rem;
+                            background: white;
+                            color: #ff5252;
+                            border: none;
+                            border-radius: 8px;
+                            cursor: pointer;
+                            margin-top: 20px;
+                        ">Reload Page</button>
                     </p>
                 </div>
             `;
-            console.error('🚫 GAME HALTED: No valid puzzles available');
-            return;
         }
-
-        // Proceed with game initialization using ONLY valid puzzles
-        console.log(`\n🎮 Starting game with ${validPuzzleCount} validated solvable puzzles\n`);
-        setupLandingPage();
-        setupTutorial();
-        initGame();
-        updateCountdown();
-        setInterval(updateCountdown, 1000); // Update countdown every second
     </script>
 </body>
 </html>
