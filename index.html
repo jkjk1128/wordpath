@@ -1170,6 +1170,23 @@
     </div>
 
     <script>
+        /**
+         * WORD HOP - PUZZLE VALIDATION SYSTEM
+         *
+         * CRITICAL REQUIREMENT: Every puzzle MUST be solvable
+         *
+         * To test a new puzzle in the browser console:
+         *   validatePuzzle('tank', 'sell')
+         *
+         * This will show:
+         *   - Whether a path exists
+         *   - Number of valid solutions
+         *   - Sample solution paths
+         *   - Validation result (accept/reject)
+         *
+         * ❌ UNSOLVABLE PUZZLES WILL PREVENT THE GAME FROM LOADING ❌
+         */
+
         // Word list - valid 4-letter words
         const VALID_WORDS = new Set([
             'able', 'acid', 'aged', 'also', 'area', 'army', 'away', 'baby', 'back', 'ball',
@@ -1814,38 +1831,266 @@
             return true;
         }
 
-        // Validate all puzzles in the array (called on page load)
+        /**
+         * ═══════════════════════════════════════════════════════════════════════════
+         * PUZZLE VALIDATION SYSTEM - CRITICAL GAME LOGIC
+         * ═══════════════════════════════════════════════════════════════════════════
+         *
+         * PURPOSE:
+         *   Ensure EVERY puzzle is solvable before it reaches players.
+         *   An impossible puzzle breaks player trust and damages the game's reputation.
+         *
+         * HOW IT WORKS:
+         *   1. BFS (Breadth-First Search) - Finds shortest path between words
+         *      - Returns -1 if NO path exists (completely unsolvable)
+         *      - Returns N if shortest path is N steps
+         *
+         *   2. DFS (Depth-First Search) - Finds ALL valid paths of exactly 4 steps
+         *      - Explores all possible word chains
+         *      - Returns array of all valid solutions
+         *
+         *   3. Validation Checks:
+         *      ✓ Words same length
+         *      ✓ Both words in dictionary
+         *      ✓ Path exists (BFS returns != -1)
+         *      ✓ At least one solution with exactly 4 steps
+         *      ✓ Shortest path = 4 (correct difficulty)
+         *
+         * VALIDATION ENFORCEMENTS:
+         *   - validateAllPuzzles() runs BEFORE game initialization
+         *   - If ANY puzzle fails validation → game WILL NOT load
+         *   - Red error screen displayed to developers
+         *   - Detailed validation report in console
+         *
+         * DEVELOPER USAGE:
+         *   Test a new puzzle in browser console:
+         *     validatePuzzle('word1', 'word2')
+         *
+         *   Example: validatePuzzle('tank', 'sell')
+         *   Output:
+         *     ✓ Path exists: 4 steps
+         *     ✓ Found 2 solutions
+         *     ✅ VALID PUZZLE
+         *     Sample solutions:
+         *       1. TANK → TALK → TALL → TELL → SELL
+         *       2. TANK → TALK → TALE → TELL → SELL
+         *
+         * ADDING NEW PUZZLES:
+         *   1. Test puzzle with validatePuzzle('start', 'end')
+         *   2. If validation passes, add to DAILY_PUZZLES array
+         *   3. If validation fails, choose different word pair
+         *   4. NEVER add unvalidated puzzles to production
+         *
+         * CRITICAL EXAMPLES:
+         *   ❌ validatePuzzle('abcd', 'wxyz')  → REJECTED (no path exists)
+         *   ❌ validatePuzzle('word', 'worm')  → REJECTED (shortest path = 1 step, not 4)
+         *   ✅ validatePuzzle('tank', 'sell')  → ACCEPTED (multiple 4-step solutions)
+         *
+         * ═══════════════════════════════════════════════════════════════════════════
+         */
+
+        // Helper function to validate a single puzzle pair before adding to DAILY_PUZZLES
+        // USE THIS when creating new puzzles to ensure they're solvable
+        function validatePuzzlePair(startWord, endWord, requiredSteps = 4) {
+            console.log(`\n🔍 Validating puzzle: ${startWord.toUpperCase()} → ${endWord.toUpperCase()}`);
+            console.log('─'.repeat(60));
+
+            // Check 1: Words must be same length
+            if (startWord.length !== endWord.length) {
+                console.error(`❌ INVALID: Words must be same length`);
+                console.error(`   ${startWord} (${startWord.length} letters) vs ${endWord} (${endWord.length} letters)`);
+                return {
+                    valid: false,
+                    reason: 'Different word lengths',
+                    solutionCount: 0,
+                    shortestPath: -1
+                };
+            }
+
+            // Check 2: Both words must be in the word list
+            if (!VALID_WORDS.has(startWord)) {
+                console.error(`❌ INVALID: "${startWord}" is not in the word list`);
+                return {
+                    valid: false,
+                    reason: `Start word "${startWord}" not in dictionary`,
+                    solutionCount: 0,
+                    shortestPath: -1
+                };
+            }
+            if (!VALID_WORDS.has(endWord)) {
+                console.error(`❌ INVALID: "${endWord}" is not in the word list`);
+                return {
+                    valid: false,
+                    reason: `End word "${endWord}" not in dictionary`,
+                    solutionCount: 0,
+                    shortestPath: -1
+                };
+            }
+
+            // Check 3: Find shortest path (BFS)
+            const shortestPath = findShortestPathLength(startWord, endWord);
+
+            if (shortestPath === -1) {
+                console.error(`❌ UNSOLVABLE: No path exists between these words`);
+                console.error(`   This puzzle can NEVER be solved - it must be rejected`);
+                return {
+                    valid: false,
+                    reason: 'No path exists (completely unsolvable)',
+                    solutionCount: 0,
+                    shortestPath: -1
+                };
+            }
+
+            console.log(`✓ Path exists: Shortest path is ${shortestPath} steps`);
+
+            // Check 4: Find all solutions of exactly N steps (DFS)
+            const allSolutions = findAllPaths(startWord, endWord, requiredSteps);
+            const solutionCount = allSolutions.length;
+
+            console.log(`✓ Found ${solutionCount} solution(s) with exactly ${requiredSteps} steps`);
+
+            if (solutionCount === 0) {
+                console.error(`❌ UNSOLVABLE: No ${requiredSteps}-step solutions exist`);
+                console.error(`   Shortest path is ${shortestPath} steps, but we need exactly ${requiredSteps} steps`);
+                return {
+                    valid: false,
+                    reason: `No ${requiredSteps}-step solutions (shortest is ${shortestPath})`,
+                    solutionCount: 0,
+                    shortestPath
+                };
+            }
+
+            // Check 5: Verify difficulty matches requirement
+            if (shortestPath !== requiredSteps) {
+                console.warn(`⚠ WRONG DIFFICULTY: Shortest path (${shortestPath}) != required (${requiredSteps})`);
+                return {
+                    valid: false,
+                    reason: `Wrong difficulty: shortest path is ${shortestPath} steps, not ${requiredSteps}`,
+                    solutionCount,
+                    shortestPath
+                };
+            }
+
+            // ALL CHECKS PASSED
+            console.log(`✅ VALID PUZZLE: ${solutionCount} solution(s) available`);
+            console.log('Sample solutions:');
+            allSolutions.slice(0, 3).forEach((solution, idx) => {
+                const fullPath = [startWord, ...solution, endWord].map(w => w.toUpperCase()).join(' → ');
+                console.log(`   ${idx + 1}. ${fullPath}`);
+            });
+            if (allSolutions.length > 3) {
+                console.log(`   ... and ${allSolutions.length - 3} more`);
+            }
+
+            return {
+                valid: true,
+                reason: 'All validation checks passed',
+                solutionCount,
+                shortestPath,
+                solutions: allSolutions
+            };
+        }
+
+        // CRITICAL: Validate all puzzles in the array (called on page load)
+        // This is a NON-NEGOTIABLE requirement - game must NOT load with invalid puzzles
         function validateAllPuzzles() {
-            console.log('Validating all daily puzzles...');
+            console.log('🔍 VALIDATING ALL DAILY PUZZLES (NON-NEGOTIABLE)...');
+            console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+
             let invalidCount = 0;
+            let unsolvableCount = 0;
             const requiredSteps = 4; // 3 blank spaces = 4 total steps
+            const validationResults = [];
 
             DAILY_PUZZLES.forEach((puzzle, index) => {
+                // Step 1: Check if path exists (BFS)
                 const pathLength = findShortestPathLength(puzzle.start, puzzle.end);
-                const isValid = pathLength === requiredSteps;
 
-                if (!isValid) {
+                // Step 2: Find ALL valid solutions of exactly 4 steps (DFS)
+                const allSolutions = findAllPaths(puzzle.start, puzzle.end, requiredSteps);
+                const solutionCount = allSolutions.length;
+
+                // Store validation metadata in puzzle object
+                puzzle.validationData = {
+                    shortestPathLength: pathLength,
+                    solutionCount: solutionCount,
+                    isValid: pathLength === requiredSteps && solutionCount > 0,
+                    isSolvable: pathLength !== -1
+                };
+
+                const result = {
+                    index,
+                    start: puzzle.start.toUpperCase(),
+                    end: puzzle.end.toUpperCase(),
+                    pathLength,
+                    solutionCount,
+                    isValid: puzzle.validationData.isValid
+                };
+                validationResults.push(result);
+
+                // CRITICAL: Check for unsolvable puzzles (no path exists)
+                if (pathLength === -1) {
+                    unsolvableCount++;
                     invalidCount++;
-                    if (pathLength === -1) {
-                        console.warn(
-                            `❌ Puzzle ${index} invalid:`,
-                            `${puzzle.start.toUpperCase()} → ${puzzle.end.toUpperCase()}`,
-                            `(No path exists)`
-                        );
-                    } else {
-                        console.warn(
-                            `❌ Puzzle ${index} invalid:`,
-                            `${puzzle.start.toUpperCase()} → ${puzzle.end.toUpperCase()}`,
-                            `(Shortest path: ${pathLength} steps, required: ${requiredSteps} steps)`
-                        );
-                    }
+                    console.error(
+                        `❌ CRITICAL ERROR - Puzzle ${index} UNSOLVABLE:`,
+                        `${puzzle.start.toUpperCase()} → ${puzzle.end.toUpperCase()}`,
+                        `(No path exists between these words)`
+                    );
+                }
+                // Check if shortest path doesn't match required steps
+                else if (pathLength !== requiredSteps) {
+                    invalidCount++;
+                    console.warn(
+                        `⚠ Puzzle ${index} wrong difficulty:`,
+                        `${puzzle.start.toUpperCase()} → ${puzzle.end.toUpperCase()}`,
+                        `(Shortest path: ${pathLength} steps, required: ${requiredSteps} steps)`
+                    );
+                }
+                // Check if no solutions exist at the required length
+                else if (solutionCount === 0) {
+                    unsolvableCount++;
+                    invalidCount++;
+                    console.error(
+                        `❌ CRITICAL ERROR - Puzzle ${index} has NO ${requiredSteps}-step solutions:`,
+                        `${puzzle.start.toUpperCase()} → ${puzzle.end.toUpperCase()}`,
+                        `(Shortest path exists but no ${requiredSteps}-step solutions found)`
+                    );
+                } else {
+                    // Valid puzzle - log success
+                    console.log(
+                        `✓ Puzzle ${index}: ${puzzle.start.toUpperCase()} → ${puzzle.end.toUpperCase()}`,
+                        `| Solutions: ${solutionCount} | Path length: ${pathLength}`
+                    );
                 }
             });
 
+            console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+
             if (invalidCount === 0) {
-                console.log(`✓ All ${DAILY_PUZZLES.length} puzzles validated successfully`);
+                console.log(`✅ SUCCESS: All ${DAILY_PUZZLES.length} puzzles validated successfully`);
+                return true;
             } else {
-                console.warn(`⚠ ${invalidCount} of ${DAILY_PUZZLES.length} puzzles failed validation`);
+                console.error(`❌ VALIDATION FAILED: ${invalidCount} of ${DAILY_PUZZLES.length} puzzles are invalid`);
+                if (unsolvableCount > 0) {
+                    console.error(`⚠ ${unsolvableCount} puzzles are COMPLETELY UNSOLVABLE (no valid path exists)`);
+                    console.error('🚫 GAME MUST NOT LAUNCH WITH UNSOLVABLE PUZZLES');
+                }
+
+                // Display summary of invalid puzzles
+                console.group('Invalid Puzzles Summary:');
+                validationResults
+                    .filter(r => !r.isValid)
+                    .forEach(r => {
+                        console.error(
+                            `${r.start} → ${r.end}:`,
+                            r.pathLength === -1 ? 'NO PATH' : `${r.pathLength} steps`,
+                            `| ${r.solutionCount} solutions`
+                        );
+                    });
+                console.groupEnd();
+
+                return false;
             }
         }
 
@@ -2678,15 +2923,56 @@
             });
         }
 
+        // Expose validation function globally for developer use in browser console
+        window.validatePuzzle = validatePuzzlePair;
+
         // Initialize on load
+        // CRITICAL: Validate all puzzles BEFORE initializing the game
+        // This is a NON-NEGOTIABLE requirement - unsolvable puzzles must never reach players
+        const validationPassed = validateAllPuzzles();
+
+        if (!validationPassed) {
+            // HALT GAME INITIALIZATION - Display error to developers
+            document.body.innerHTML = `
+                <div style="
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: #ff5252;
+                    color: white;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 40px;
+                    font-family: Arial, sans-serif;
+                    text-align: center;
+                ">
+                    <h1 style="font-size: 3rem; margin-bottom: 20px;">🚫 CRITICAL ERROR</h1>
+                    <h2 style="font-size: 1.5rem; margin-bottom: 20px;">Game Cannot Load</h2>
+                    <p style="font-size: 1.2rem; max-width: 800px; line-height: 1.6;">
+                        One or more daily puzzles are <strong>UNSOLVABLE</strong>.
+                        <br><br>
+                        The game has been prevented from loading to protect player experience.
+                        <br><br>
+                        <strong>Check the browser console for details.</strong>
+                        <br><br>
+                        All puzzles must be validated as solvable before deployment.
+                    </p>
+                </div>
+            `;
+            console.error('🚫 GAME HALTED: Fix all invalid puzzles before deploying to production');
+            return; // STOP EXECUTION
+        }
+
+        // Validation passed - proceed with normal game initialization
         setupLandingPage();
         setupTutorial();
         initGame();
         updateCountdown();
         setInterval(updateCountdown, 1000); // Update countdown every second
-
-        // Validate all puzzles (development/debugging feature)
-        validateAllPuzzles();
     </script>
 </body>
 </html>
