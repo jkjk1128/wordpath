@@ -2109,7 +2109,26 @@
             messageHTML += `<div style="margin-bottom: 15px; font-size: 1.1rem;">${userPath}</div>`;
 
             messageHTML += `<div style="margin-top: 20px; font-size: 0.95rem; opacity: 0.8;">`;
-            messageHTML += `Can you find another path?`;
+
+            // Conditional messaging based on remaining solutions
+            const totalSolutions = currentPuzzleSolutions.length;
+            const foundCount = foundSolutions.length;
+
+            if (hasMoreSolutions) {
+                const remaining = totalSolutions - foundCount;
+                if (remaining === 1) {
+                    messageHTML += `Can you find the other path?`;
+                } else {
+                    messageHTML += `Can you find another path?`;
+                }
+            } else {
+                if (totalSolutions === 1) {
+                    messageHTML += `Perfect! You found the only solution!<br><span style="font-size: 0.9em; opacity: 0.9;">A new puzzle arrives tomorrow.</span>`;
+                } else {
+                    messageHTML += `Amazing! You've found all ${totalSolutions} solutions!<br><span style="font-size: 0.9em; opacity: 0.9;">Come back tomorrow for a new challenge.</span>`;
+                }
+            }
+
             messageHTML += `</div>`;
             messageHTML += `</div>`;
 
