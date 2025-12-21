@@ -1894,17 +1894,15 @@
             const inputs = [input1, input2, input3];
             const words = [word1, word2, word3];
 
-            // If no input at all, just return (no penalty)
-            let hasAnyInput = false;
-            for (let i = 0; i < 3; i++) {
-                if (words[i] && words[i].length === 4) {
-                    hasAnyInput = true;
-                    break;
-                }
-            }
-            if (!hasAnyInput) {
-                showMessage('', '');
-                return;
+            // Input validation - check all three words are filled
+            // This MUST happen before any attempt consumption
+            const allFilled = words.every(word => word && word.length === 4);
+
+            if (!allFilled) {
+                // Show friendly feedback without consuming an attempt
+                showMessage('Please fill in all three words before checking your path.', 'info');
+                shakeInputs();
+                return;  // Early return - NO penalty for incomplete input
             }
 
             // Clear all correct markings first
@@ -1924,14 +1922,6 @@
             for (let i = 0; i < 3; i++) {
                 const userWord = words[i];
                 const prevWord = fullChain[i];
-
-                // Check if word is filled
-                if (!userWord || userWord.length !== 4) {
-                    errorMessage = 'Please fill in all three words';
-                    isChainValid = false;
-                    failedAtStep = i;
-                    break;
-                }
 
                 // Check if word is valid English word
                 if (!VALID_WORDS.has(userWord)) {
