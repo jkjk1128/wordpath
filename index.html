@@ -1991,16 +1991,16 @@
             };
         }
 
-        // CRITICAL: Validate all puzzles in the array (called on page load)
-        // This is a NON-NEGOTIABLE requirement - game must NOT load with invalid puzzles
-        function validateAllPuzzles() {
-            console.log('🔍 VALIDATING ALL DAILY PUZZLES (NON-NEGOTIABLE)...');
+        // CRITICAL: Validate all puzzles and FILTER OUT invalid ones
+        // This is a NON-NEGOTIABLE requirement - ONLY solvable puzzles reach players
+        function validateAndFilterPuzzles() {
+            console.log('🔍 VALIDATING ALL DAILY PUZZLES (FILTERING OUT INVALID)...');
             console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
-            let invalidCount = 0;
-            let unsolvableCount = 0;
             const requiredSteps = 4; // 3 blank spaces = 4 total steps
-            const validationResults = [];
+            const validPuzzles = [];
+            const invalidPuzzles = [];
+            let originalCount = DAILY_PUZZLES.length;
 
             DAILY_PUZZLES.forEach((puzzle, index) => {
                 // Step 1: Check if path exists (BFS)
@@ -2018,84 +2018,80 @@
                     isSolvable: pathLength !== -1
                 };
 
-                const result = {
-                    index,
-                    start: puzzle.start.toUpperCase(),
-                    end: puzzle.end.toUpperCase(),
-                    pathLength,
-                    solutionCount,
-                    isValid: puzzle.validationData.isValid
-                };
-                validationResults.push(result);
+                // DECISION: Keep or discard this puzzle?
+                const isValid = pathLength === requiredSteps && solutionCount > 0;
 
-                // CRITICAL: Check for unsolvable puzzles (no path exists)
-                if (pathLength === -1) {
-                    unsolvableCount++;
-                    invalidCount++;
-                    console.error(
-                        `❌ CRITICAL ERROR - Puzzle ${index} UNSOLVABLE:`,
-                        `${puzzle.start.toUpperCase()} → ${puzzle.end.toUpperCase()}`,
-                        `(No path exists between these words)`
-                    );
-                }
-                // Check if shortest path doesn't match required steps
-                else if (pathLength !== requiredSteps) {
-                    invalidCount++;
-                    console.warn(
-                        `⚠ Puzzle ${index} wrong difficulty:`,
-                        `${puzzle.start.toUpperCase()} → ${puzzle.end.toUpperCase()}`,
-                        `(Shortest path: ${pathLength} steps, required: ${requiredSteps} steps)`
-                    );
-                }
-                // Check if no solutions exist at the required length
-                else if (solutionCount === 0) {
-                    unsolvableCount++;
-                    invalidCount++;
-                    console.error(
-                        `❌ CRITICAL ERROR - Puzzle ${index} has NO ${requiredSteps}-step solutions:`,
-                        `${puzzle.start.toUpperCase()} → ${puzzle.end.toUpperCase()}`,
-                        `(Shortest path exists but no ${requiredSteps}-step solutions found)`
-                    );
-                } else {
-                    // Valid puzzle - log success
+                if (isValid) {
+                    // ✅ VALID - Add to valid puzzles array
+                    validPuzzles.push(puzzle);
                     console.log(
                         `✓ Puzzle ${index}: ${puzzle.start.toUpperCase()} → ${puzzle.end.toUpperCase()}`,
-                        `| Solutions: ${solutionCount} | Path length: ${pathLength}`
+                        `| Solutions: ${solutionCount} | KEPT`
                     );
+                } else {
+                    // ❌ INVALID - Add to trash, log reason
+                    invalidPuzzles.push({
+                        index,
+                        puzzle,
+                        start: puzzle.start.toUpperCase(),
+                        end: puzzle.end.toUpperCase(),
+                        pathLength,
+                        solutionCount,
+                        reason: pathLength === -1
+                            ? 'NO PATH EXISTS (completely unsolvable)'
+                            : solutionCount === 0
+                            ? `No ${requiredSteps}-step solutions (shortest: ${pathLength})`
+                            : `Wrong difficulty (shortest: ${pathLength}, need: ${requiredSteps})`
+                    });
+
+                    if (pathLength === -1) {
+                        console.error(
+                            `🗑️ Puzzle ${index} DISCARDED:`,
+                            `${puzzle.start.toUpperCase()} → ${puzzle.end.toUpperCase()}`,
+                            `- NO PATH EXISTS (completely unsolvable)`
+                        );
+                    } else if (solutionCount === 0) {
+                        console.error(
+                            `🗑️ Puzzle ${index} DISCARDED:`,
+                            `${puzzle.start.toUpperCase()} → ${puzzle.end.toUpperCase()}`,
+                            `- No ${requiredSteps}-step solutions (shortest: ${pathLength} steps)`
+                        );
+                    } else {
+                        console.warn(
+                            `🗑️ Puzzle ${index} DISCARDED:`,
+                            `${puzzle.start.toUpperCase()} → ${puzzle.end.toUpperCase()}`,
+                            `- Wrong difficulty (shortest: ${pathLength}, need: ${requiredSteps})`
+                        );
+                    }
                 }
             });
 
             console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
-            if (invalidCount === 0) {
-                console.log(`✅ SUCCESS: All ${DAILY_PUZZLES.length} puzzles validated successfully`);
-                return true;
-            } else {
-                console.warn(`⚠ VALIDATION WARNINGS: ${invalidCount} of ${DAILY_PUZZLES.length} puzzles have issues`);
-                if (unsolvableCount > 0) {
-                    console.warn(`⚠ ${unsolvableCount} puzzles are COMPLETELY UNSOLVABLE (should be fixed)`);
-                    console.warn('⚠ These puzzles should be fixed or removed before final deployment');
-                }
+            // REPLACE DAILY_PUZZLES with ONLY valid puzzles
+            DAILY_PUZZLES.length = 0; // Clear original array
+            DAILY_PUZZLES.push(...validPuzzles); // Replace with valid ones
 
-                // Display summary of invalid puzzles
-                console.group('⚠ Invalid Puzzles (Game will still load):');
-                validationResults
-                    .filter(r => !r.isValid)
-                    .forEach(r => {
-                        console.warn(
-                            `Puzzle ${r.index}: ${r.start} → ${r.end}:`,
-                            r.pathLength === -1 ? 'NO PATH' : `${r.pathLength} steps`,
-                            `| ${r.solutionCount} solutions`
-                        );
-                    });
+            if (invalidPuzzles.length === 0) {
+                console.log(`✅ SUCCESS: All ${originalCount} puzzles are valid`);
+                console.log(`✅ ${DAILY_PUZZLES.length} solvable puzzles loaded into game`);
+            } else {
+                console.warn(`🗑️ FILTERED OUT: ${invalidPuzzles.length} invalid puzzles discarded`);
+                console.log(`✅ KEPT: ${validPuzzles.length} valid puzzles loaded into game`);
+
+                // Show summary of what was thrown away
+                console.group('🗑️ Discarded Puzzles (thrown in trash):');
+                invalidPuzzles.forEach(inv => {
+                    console.warn(`   ${inv.start} → ${inv.end}: ${inv.reason}`);
+                });
                 console.groupEnd();
 
-                console.log(`✅ Proceeding with game initialization`);
-                console.log(`   Valid puzzles: ${DAILY_PUZZLES.length - invalidCount}`);
-                console.log(`   Invalid puzzles will be skipped when encountered`);
-
-                return true; // Allow game to load - invalid puzzles logged as warnings
+                console.log('');
+                console.log('✅ GUARANTEE: Every daily puzzle is now 100% solvable');
+                console.log(`   Players will only see the ${DAILY_PUZZLES.length} valid puzzles`);
             }
+
+            return DAILY_PUZZLES.length; // Return count of valid puzzles
         }
 
         // Update solutions counter
@@ -2931,10 +2927,45 @@
         window.validatePuzzle = validatePuzzlePair;
 
         // Initialize on load
-        // Validate all puzzles and log any issues (game loads regardless)
-        validateAllPuzzles();
+        // CRITICAL: Filter out invalid puzzles - ONLY valid puzzles will be used
+        const validPuzzleCount = validateAndFilterPuzzles();
 
-        // Proceed with game initialization
+        if (validPuzzleCount === 0) {
+            // NO VALID PUZZLES - Cannot start game
+            document.body.innerHTML = `
+                <div style="
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: #ff5252;
+                    color: white;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 40px;
+                    font-family: Arial, sans-serif;
+                    text-align: center;
+                ">
+                    <h1 style="font-size: 3rem; margin-bottom: 20px;">🚫 NO VALID PUZZLES</h1>
+                    <h2 style="font-size: 1.5rem; margin-bottom: 20px;">Game Cannot Start</h2>
+                    <p style="font-size: 1.2rem; max-width: 800px; line-height: 1.6;">
+                        All puzzles have been filtered out due to validation failures.
+                        <br><br>
+                        <strong>Check the browser console for details.</strong>
+                        <br><br>
+                        Please add valid word pairs to the puzzle array.
+                    </p>
+                </div>
+            `;
+            console.error('🚫 GAME HALTED: No valid puzzles available');
+            return;
+        }
+
+        // Proceed with game initialization using ONLY valid puzzles
+        console.log(`\n🎮 Starting game with ${validPuzzleCount} validated solvable puzzles\n`);
         setupLandingPage();
         setupTutorial();
         initGame();
