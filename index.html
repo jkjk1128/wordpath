@@ -246,7 +246,7 @@
 
         .feedback-area {
             position: absolute;
-            right: -280px;
+            right: -210px;
             top: 50%;
             transform: translateY(-50%);
             min-width: 250px;
@@ -1159,7 +1159,7 @@
     </div>
 
     <div class="container">
-        <button class="timer-toggle" id="timer-toggle">Show timer</button>
+        <button class="timer-toggle" id="timer-toggle">Show Timer</button>
         <button class="help-button" id="help-btn" title="How to Play">?</button>
 
         <header>
@@ -1256,7 +1256,7 @@
         </div>
 
         <footer>
-            <div>Daily Puzzle</div>
+            <div id="footer-puzzle-number">Daily Puzzle #1</div>
             <div class="countdown">
                 Next puzzle in <span class="countdown-timer" id="countdown-timer">--:--:--</span>
             </div>
@@ -2457,7 +2457,7 @@
             timerVisible = false;
             const timerToggle = document.getElementById('timer-toggle');
             if (timerToggle) {
-                timerToggle.textContent = 'Show timer';
+                timerToggle.textContent = 'Show Timer';
             }
 
             // Reset inputs
@@ -2746,6 +2746,9 @@
             // Build solution path as vertical boxes (matching game layout)
             let messageHTML = `<div style="text-align: center;">`;
 
+            // Congrats message
+            messageHTML += `<div style="font-size: 1.1rem; font-weight: 600; color: #333; margin-bottom: 15px;">Congrats! You solved it!</div>`;
+
             // Vertical word boxes
             messageHTML += `<div style="display: flex; flex-direction: column; align-items: center; gap: 6px; margin: 15px 0;">`;
 
@@ -2795,7 +2798,7 @@
             messageHTML += `</div>`;
 
             messageHTML += `<div style="margin-top: 20px; font-size: 0.95rem; opacity: 0.8;">`;
-            messageHTML += `Come back tomorrow for a new puzzle.`;
+            messageHTML += `Come back tomorrow for a new puzzle!`;
             messageHTML += `</div>`;
             messageHTML += `</div>`;
 
@@ -3008,6 +3011,12 @@
 
             // Update puzzle number display
             landingPuzzleNumber.textContent = `Daily Puzzle #${puzzleNumber}`;
+
+            // Update footer puzzle number
+            const footerPuzzleNumber = document.getElementById('footer-puzzle-number');
+            if (footerPuzzleNumber) {
+                footerPuzzleNumber.textContent = `Daily Puzzle #${puzzleNumber}`;
+            }
 
             // Set date display with ET timezone
             const etDateFormatted = now.toLocaleDateString('en-US', {
@@ -3296,7 +3305,7 @@
                         timerToggle.textContent = formatTimeMMSS(elapsedSeconds);
                     } else {
                         // Hide timer - show "Show timer" text
-                        timerToggle.textContent = 'Show timer';
+                        timerToggle.textContent = 'Show Timer';
                     }
                 });
             }
