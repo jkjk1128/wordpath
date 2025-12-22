@@ -499,7 +499,7 @@
 
         /* Share button styling */
         .share-btn {
-            background: #3B82F6; /* Blue color to differentiate from green Keep Playing */
+            background: #3B82F6; /* Blue color for Share button */
             box-shadow: 0 6px 0 #1E40AF; /* Darker blue shadow */
         }
 
@@ -1278,7 +1278,6 @@
             <!-- Button container for better layout -->
             <div class="success-buttons">
                 <button class="play-btn share-btn" id="share-btn">Share Results</button>
-                <button class="play-btn" id="keep-playing-btn" style="display: none;">Keep Playing</button>
                 <button class="play-btn" id="return-from-success-btn" style="display: none;">Return to Game</button>
             </div>
         </div>
@@ -2642,7 +2641,7 @@
             // Start the sequential green animation
             glowPath();
 
-            // Check if there are more solutions to find
+            // Show success screen after animation completes
             setTimeout(() => {
                 showSuccessScreen(userSolution);
             }, 1500);
@@ -2659,7 +2658,6 @@
 
         // Show game over screen
         function showGameOverScreen() {
-            // Show solutions the user found (if any)
             // Show one valid solution
             let solutionsHTML = `<div style="text-align: center; padding: 20px;">`;
             solutionsHTML += `<div style="font-size: 1.1rem; margin-bottom: 20px; opacity: 0.8;">Out of attempts! The puzzle resets tomorrow.</div>`;
@@ -2790,11 +2788,8 @@
 
             document.getElementById('success-path').innerHTML = messageHTML;
 
-            // Always show Return to Game button, never Keep Playing
-            const keepPlayingBtn = document.getElementById('keep-playing-btn');
+            // Show Return to Game button
             const returnFromSuccessBtn = document.getElementById('return-from-success-btn');
-
-            if (keepPlayingBtn) keepPlayingBtn.style.display = 'none';
             if (returnFromSuccessBtn) returnFromSuccessBtn.style.display = 'block';
 
             document.getElementById('success-screen').style.display = 'flex';
