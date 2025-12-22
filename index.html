@@ -527,6 +527,59 @@
             }
         }
 
+        /* Player Statistics Display (Wordle-style) */
+        .player-stats {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+            padding: 20px 10px;
+        }
+
+        .stat-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 70px;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #000;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        /* Mobile: Smaller stats */
+        @media (max-width: 480px) {
+            .player-stats {
+                gap: 15px;
+                padding: 15px 5px;
+                margin: 15px 0;
+            }
+
+            .stat-box {
+                min-width: 60px;
+            }
+
+            .stat-number {
+                font-size: 1.6rem;
+            }
+
+            .stat-label {
+                font-size: 0.7rem;
+            }
+        }
+
         /* Tutorial Modal */
         .tutorial-modal {
             position: fixed;
@@ -1736,6 +1789,62 @@
             }
         }
 
+        // Player statistics tracking
+        function getPlayerStats() {
+            const defaultStats = {
+                gamesPlayed: 0,
+                gamesWon: 0,
+                lastCompletedPuzzle: null  // Store puzzle identifier to prevent duplicate counting
+            };
+
+            try {
+                const stored = localStorage.getItem('wordHopStats');
+                return stored ? { ...defaultStats, ...JSON.parse(stored) } : defaultStats;
+            } catch (e) {
+                console.error('Error reading stats from localStorage:', e);
+                return defaultStats;
+            }
+        }
+
+        function savePlayerStats(stats) {
+            try {
+                localStorage.setItem('wordHopStats', JSON.stringify(stats));
+            } catch (e) {
+                console.error('Error saving stats to localStorage:', e);
+            }
+        }
+
+        function getPuzzleIdentifier() {
+            // Create unique identifier for today's puzzle based on start and end words
+            if (!currentPuzzle) return null;
+            return `${currentPuzzle.start}-${currentPuzzle.end}`;
+        }
+
+        function updateStatsOnWin() {
+            const stats = getPlayerStats();
+            const puzzleId = getPuzzleIdentifier();
+
+            // Check if this puzzle was already completed
+            if (stats.lastCompletedPuzzle === puzzleId) {
+                console.log('Stats already updated for this puzzle');
+                return stats;  // Don't count again
+            }
+
+            // Update stats
+            stats.gamesPlayed += 1;
+            stats.gamesWon += 1;
+            stats.lastCompletedPuzzle = puzzleId;
+
+            savePlayerStats(stats);
+            console.log('Stats updated:', stats);
+            return stats;
+        }
+
+        function calculateWinPercentage(stats) {
+            if (stats.gamesPlayed === 0) return 0;
+            return Math.round((stats.gamesWon / stats.gamesPlayed) * 100);
+        }
+
         // Tab switching
         function switchTab(tabName) {
             // Hide all tabs
@@ -2536,6 +2645,9 @@
                 const elapsedSeconds = Math.floor((Date.now() - gameStartTime) / 1000);
                 finalSolveTime = formatTimeHumanReadable(elapsedSeconds);
 
+                // Update player statistics
+                updateStatsOnWin();
+
                 // Mark puzzle as solved to lock game state
                 puzzleSolved = true;
 
@@ -2573,9 +2685,34 @@
 
             messageHTML += `</div>`;
 
-            // Show solve time if puzzle is complete
-            if (!hasMoreSolutions && finalSolveTime) {
-                messageHTML += `<div style="margin-top: 15px; font-size: 0.95rem; opacity: 0.7;">Solved in ${finalSolveTime}</div>`;
+            // Show player statistics if puzzle is complete
+            if (!hasMoreSolutions) {
+                const stats = getPlayerStats();
+                const winPercentage = calculateWinPercentage(stats);
+                const elapsedSeconds = gameStartTime ? Math.floor((Date.now() - gameStartTime) / 1000) : 0;
+                const timeDisplay = formatTimeMMSS(elapsedSeconds);
+
+                messageHTML += `<div class="player-stats">`;
+
+                // Games Played
+                messageHTML += `<div class="stat-box">`;
+                messageHTML += `<div class="stat-number">${stats.gamesPlayed}</div>`;
+                messageHTML += `<div class="stat-label">Played</div>`;
+                messageHTML += `</div>`;
+
+                // Win Percentage
+                messageHTML += `<div class="stat-box">`;
+                messageHTML += `<div class="stat-number">${winPercentage}%</div>`;
+                messageHTML += `<div class="stat-label">Win %</div>`;
+                messageHTML += `</div>`;
+
+                // Time (today's puzzle)
+                messageHTML += `<div class="stat-box">`;
+                messageHTML += `<div class="stat-number">${timeDisplay}</div>`;
+                messageHTML += `<div class="stat-label">Time</div>`;
+                messageHTML += `</div>`;
+
+                messageHTML += `</div>`;
             }
 
             messageHTML += `<div style="margin-top: 20px; font-size: 0.95rem; opacity: 0.8;">`;
