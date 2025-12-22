@@ -519,6 +519,14 @@
             box-shadow: 0 2px 0 #1E40AF;
         }
 
+        /* Desktop-only: Smaller share button */
+        @media (min-width: 769px) {
+            .share-btn {
+                padding: 12px 24px;
+                font-size: 0.95rem;
+            }
+        }
+
         /* Tutorial Modal */
         .tutorial-modal {
             position: fixed;
@@ -1688,16 +1696,32 @@
         let foundSolutions = []; // Solutions the user has already found
         let attemptsRemaining = 3;
         let gameOver = false;
+        let puzzleSolved = false;  // Track if puzzle has been solved (locks game state)
         let gameStartTime = null;  // Track when user starts playing
         let timerInterval = null;  // Timer update interval
         let timerVisible = false;  // Track if timer is visible
-        let finalSolveTime = null;  // Store final solve time in mm:ss format
+        let finalSolveTime = null;  // Store final solve time in human-readable format
 
-        // Format elapsed seconds as mm:ss
-        function formatTime(seconds) {
+        // Format elapsed seconds as mm:ss for timer display
+        function formatTimeMMSS(seconds) {
             const minutes = Math.floor(seconds / 60);
             const secs = seconds % 60;
             return `${minutes}:${String(secs).padStart(2, '0')}`;
+        }
+
+        // Format elapsed seconds as human-readable text
+        function formatTimeHumanReadable(seconds) {
+            if (seconds < 60) {
+                // Under 1 minute: "X seconds"
+                return `${seconds} second${seconds === 1 ? '' : 's'}`;
+            } else {
+                // 1 minute or more: "M minute(s) and S second(s)"
+                const minutes = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                const minuteText = `${minutes} minute${minutes === 1 ? '' : 's'}`;
+                const secondText = `${secs} second${secs === 1 ? '' : 's'}`;
+                return `${minuteText} and ${secondText}`;
+            }
         }
 
         // Update timer display
@@ -1708,7 +1732,7 @@
             const timerToggle = document.getElementById('timer-toggle');
 
             if (timerVisible && timerToggle) {
-                timerToggle.textContent = formatTime(elapsedSeconds);
+                timerToggle.textContent = formatTimeMMSS(elapsedSeconds);
             }
         }
 
@@ -2247,6 +2271,7 @@
 
             attemptsRemaining = 3;
             gameOver = false;
+            puzzleSolved = false;  // Reset solved state for new game
             updateAttemptsDisplay();
             const messageEl = document.getElementById('message');
             messageEl.textContent = '';
@@ -2299,6 +2324,11 @@
         // Check the path
         function checkPath() {
             if (gameOver) {
+                return;
+            }
+
+            // Prevent any action if puzzle has been solved
+            if (puzzleSolved) {
                 return;
             }
 
@@ -2504,7 +2534,10 @@
             // Calculate and store solve time (only once, on first solution or when all found)
             if (!hasMoreSolutions && gameStartTime && !finalSolveTime) {
                 const elapsedSeconds = Math.floor((Date.now() - gameStartTime) / 1000);
-                finalSolveTime = formatTime(elapsedSeconds);
+                finalSolveTime = formatTimeHumanReadable(elapsedSeconds);
+
+                // Mark puzzle as solved to lock game state
+                puzzleSolved = true;
 
                 // Stop the timer interval
                 if (timerInterval) {
@@ -2513,25 +2546,36 @@
                 }
             }
 
-            // Show the user's solution
-            const userPath = [
-                currentPuzzle.start.toUpperCase(),
-                word1.toUpperCase(),
-                word2.toUpperCase(),
-                word3.toUpperCase(),
-                currentPuzzle.end.toUpperCase()
-            ].join(' → ');
-
             // Update title and subtitle
             document.getElementById('success-title').textContent = 'Excellent!';
             document.getElementById('success-subtitle').textContent = `You found a valid path!`;
 
+            // Build solution path as vertical boxes (matching game layout)
             let messageHTML = `<div style="text-align: center;">`;
-            messageHTML += `<div style="margin-bottom: 15px; font-size: 1.1rem;">${userPath}</div>`;
+
+            // Vertical word boxes
+            messageHTML += `<div style="display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 20px 0;">`;
+
+            // Start word (gray background)
+            messageHTML += `<div style="background: #f5f5f5; border: 2px solid #000; border-radius: 10px; padding: 12px 20px; font-size: 1.2rem; font-weight: 700; letter-spacing: 2px; box-shadow: 0 2px 0 #000; min-width: 120px; text-align: center;">${currentPuzzle.start.toUpperCase()}</div>`;
+
+            // Word 1 (white background)
+            messageHTML += `<div style="background: #fff; border: 2px solid #000; border-radius: 10px; padding: 12px 20px; font-size: 1.2rem; font-weight: 700; letter-spacing: 2px; box-shadow: 0 2px 0 #000; min-width: 120px; text-align: center;">${word1.toUpperCase()}</div>`;
+
+            // Word 2 (white background)
+            messageHTML += `<div style="background: #fff; border: 2px solid #000; border-radius: 10px; padding: 12px 20px; font-size: 1.2rem; font-weight: 700; letter-spacing: 2px; box-shadow: 0 2px 0 #000; min-width: 120px; text-align: center;">${word2.toUpperCase()}</div>`;
+
+            // Word 3 (white background)
+            messageHTML += `<div style="background: #fff; border: 2px solid #000; border-radius: 10px; padding: 12px 20px; font-size: 1.2rem; font-weight: 700; letter-spacing: 2px; box-shadow: 0 2px 0 #000; min-width: 120px; text-align: center;">${word3.toUpperCase()}</div>`;
+
+            // End word (gray background)
+            messageHTML += `<div style="background: #f5f5f5; border: 2px solid #000; border-radius: 10px; padding: 12px 20px; font-size: 1.2rem; font-weight: 700; letter-spacing: 2px; box-shadow: 0 2px 0 #000; min-width: 120px; text-align: center;">${currentPuzzle.end.toUpperCase()}</div>`;
+
+            messageHTML += `</div>`;
 
             // Show solve time if puzzle is complete
             if (!hasMoreSolutions && finalSolveTime) {
-                messageHTML += `<div style="margin-top: 10px; font-size: 0.95rem; opacity: 0.7;">Solved in ${finalSolveTime}</div>`;
+                messageHTML += `<div style="margin-top: 15px; font-size: 0.95rem; opacity: 0.7;">Solved in ${finalSolveTime}</div>`;
             }
 
             messageHTML += `<div style="margin-top: 20px; font-size: 0.95rem; opacity: 0.8;">`;
@@ -2693,13 +2737,13 @@
             const totalSolutions = currentPuzzleSolutions.length;
             const foundCount = foundSolutions.length;
 
-            // Use finalSolveTime if available, otherwise calculate current time in mm:ss format
+            // Use finalSolveTime if available, otherwise calculate current time in human-readable format
             let timeString;
             if (finalSolveTime) {
                 timeString = finalSolveTime;
             } else {
                 const elapsedSeconds = gameStartTime ? Math.floor((Date.now() - gameStartTime) / 1000) : 0;
-                timeString = formatTime(elapsedSeconds);
+                timeString = formatTimeHumanReadable(elapsedSeconds);
             }
 
             // Build share message based on conditions
@@ -3044,7 +3088,7 @@
                     if (timerVisible) {
                         // Show timer - display current elapsed time
                         const elapsedSeconds = gameStartTime ? Math.floor((Date.now() - gameStartTime) / 1000) : 0;
-                        timerToggle.textContent = formatTime(elapsedSeconds);
+                        timerToggle.textContent = formatTimeMMSS(elapsedSeconds);
                     } else {
                         // Hide timer - show "Show timer" text
                         timerToggle.textContent = 'Show timer';
