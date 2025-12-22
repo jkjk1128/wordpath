@@ -564,9 +564,9 @@
         /* Mobile: Smaller stats */
         @media (max-width: 480px) {
             .player-stats {
-                gap: 15px;
-                padding: 15px 5px;
-                margin: 15px 0;
+                gap: 12px;
+                padding: 10px 5px;
+                margin: 10px 0;
             }
 
             .stat-box {
@@ -574,11 +574,11 @@
             }
 
             .stat-number {
-                font-size: 1.6rem;
+                font-size: 1.3rem;
             }
 
             .stat-label {
-                font-size: 0.7rem;
+                font-size: 0.65rem;
             }
         }
 
@@ -808,7 +808,7 @@
             }
 
             .modal {
-                padding: 35px 25px;
+                padding: 25px 20px;
             }
 
             .modal h2 {
@@ -873,13 +873,46 @@
             }
 
             .success-buttons {
-                gap: 10px;
-                margin-top: 20px;
+                gap: 8px;
+                margin-top: 12px;
             }
 
             .share-btn {
-                padding: 12px 40px;
-                font-size: 1rem;
+                padding: 11px 35px;
+                font-size: 0.95rem;
+            }
+
+            /* Success popup mobile optimization */
+            .modal {
+                padding: 20px 15px;
+                margin: 10px;
+                max-height: 95vh;
+            }
+
+            .modal h2 {
+                font-size: 1.8rem;
+                margin-bottom: 15px;
+            }
+
+            /* Compact word boxes in success popup on mobile */
+            .success-screen .solution > div > div > div {
+                padding: 8px 12px !important;
+                font-size: 1rem !important;
+                min-width: 90px !important;
+                border-width: 2px !important;
+                border-radius: 8px !important;
+            }
+
+            /* Reduce gap and margin for word box container */
+            .success-screen .solution > div > div {
+                gap: 4px !important;
+                margin: 10px 0 !important;
+            }
+
+            /* Reduce message margin on mobile */
+            .success-screen .solution > div:last-child {
+                margin-top: 10px !important;
+                font-size: 0.85rem !important;
             }
 
             /* Tutorial/Help popup mobile optimization */
