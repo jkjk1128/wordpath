@@ -3003,6 +3003,58 @@
             }
         });
 
+        // Share text templates for single solution puzzles
+        const singleSolutionTemplates = [
+            "I solved today's Word Hop in {time}!\nCan you do it too? {url}",
+            "Just finished Word Hop! Solve today's puzzle at {url}",
+            "I completed today's Word Hop in {time}!\nTry it now at {url}",
+            "Word Hop puzzle solved in {time}!\nThink you can beat my time? {url}",
+            "Today's Word Hop: Done in {time}!\nYour turn: {url}",
+            "Solved Word Hop today in {time}!\nCan you match it? {url}"
+        ];
+
+        // Share text templates for multiple solution puzzles
+        const multipleSolutionTemplates = [
+            "I found {found} solution{s} in today's Word Hop in {time}!\nCan you find them all? {url}",
+            "Word Hop completed: {found}/{total} solutions in {time}!\nChallenge yourself: {url}",
+            "Solved Word Hop today and discovered {found} solution{s} in {time}.\nCan you beat me? {url}",
+            "Found {found} out of {total} solutions in Word Hop today!\nTime: {time}. Try it: {url}",
+            "Word Hop challenge: {found}/{total} solutions found in {time}.\nCan you find more? {url}",
+            "Today's Word Hop: {found} solution{s} in {time}!\nThink you can do better? {url}"
+        ];
+
+        // Generate share text from templates
+        function generateShareText(totalSolutions, foundCount, timeString) {
+            const url = "www.playwordhop.com";
+            let template;
+
+            if (totalSolutions === 1) {
+                // Randomly select from single solution templates
+                const randomIndex = Math.floor(Math.random() * singleSolutionTemplates.length);
+                template = singleSolutionTemplates[randomIndex];
+
+                // Replace placeholders
+                return template
+                    .replace('{time}', timeString)
+                    .replace('{url}', url);
+            } else {
+                // Randomly select from multiple solution templates
+                const randomIndex = Math.floor(Math.random() * multipleSolutionTemplates.length);
+                template = multipleSolutionTemplates[randomIndex];
+
+                // Handle singular/plural for "solution"
+                const plural = foundCount === 1 ? '' : 's';
+
+                // Replace placeholders
+                return template
+                    .replace('{found}', foundCount)
+                    .replace('{total}', totalSolutions)
+                    .replace('{time}', timeString)
+                    .replace('{s}', plural)
+                    .replace('{url}', url);
+            }
+        }
+
         // Share button handler
         document.getElementById('share-btn').addEventListener('click', () => {
             const totalSolutions = currentPuzzleSolutions.length;
@@ -3017,17 +3069,8 @@
                 timeString = formatTimeHumanReadable(elapsedSeconds);
             }
 
-            // Build share message based on conditions
-            let shareText = '';
-
-            if (totalSolutions === 1) {
-                // Case A: Single solution puzzle
-                shareText = `I solved the Word Hop in ${timeString}! 🎯\n\nPlay today's puzzle at playwordhop.com`;
-            } else {
-                // Case B: Multiple solution puzzle
-                const solutionWord = foundCount === 1 ? 'solution' : 'solutions';
-                shareText = `I solved the Word Hop! Found ${foundCount} ${solutionWord} in ${timeString}! 🎯\n\nPlay today's puzzle at playwordhop.com`;
-            }
+            // Generate dynamic share text
+            const shareText = generateShareText(totalSolutions, foundCount, timeString);
 
             // Try Web Share API first (mobile), fallback to clipboard
             if (navigator.share) {
