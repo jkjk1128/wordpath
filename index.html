@@ -2559,6 +2559,11 @@
                 return;
             }
 
+            // Track check path clicked event
+            if (typeof plausible !== 'undefined') {
+                plausible('check_path_clicked');
+            }
+
             const input1 = document.getElementById('word1');
             const input2 = document.getElementById('word2');
             const input3 = document.getElementById('word3');
@@ -2736,6 +2741,11 @@
                 // Mark puzzle as solved to lock game state
                 puzzleSolved = true;
 
+                // Track puzzle solved event (only fires once)
+                if (typeof plausible !== 'undefined') {
+                    plausible('puzzle_solved');
+                }
+
                 // Store the solution for reopening
                 lastSolvedSolution = userSolution;
 
@@ -2901,6 +2911,11 @@
 
         // Return to Game button handler
         document.getElementById('return-from-success-btn').addEventListener('click', () => {
+            // Track return to game clicked event
+            if (typeof plausible !== 'undefined') {
+                plausible('return_to_game_clicked');
+            }
+
             // Hide success screen
             document.getElementById('success-screen').style.display = 'none';
 
@@ -2940,6 +2955,11 @@
 
         // Share button handler
         document.getElementById('share-btn').addEventListener('click', () => {
+            // Track share clicked event
+            if (typeof plausible !== 'undefined') {
+                plausible('share_clicked');
+            }
+
             // Use finalSolveTime if available, otherwise calculate current time in human-readable format
             let timeString;
             if (finalSolveTime) {
@@ -3045,6 +3065,11 @@
             playBtn.addEventListener('click', () => {
                 gameStartTime = Date.now();  // Start timing
                 gameState = GameState.PLAYING;  // Set state to playing
+
+                // Track game start event
+                if (typeof plausible !== 'undefined') {
+                    plausible('game_start');
+                }
 
                 // Start timer update interval
                 if (timerInterval) {
@@ -3277,6 +3302,11 @@
                 // Show tutorial modal
                 tutorialModal.style.display = 'flex';
 
+                // Track tutorial opened event
+                if (typeof plausible !== 'undefined') {
+                    plausible('tutorial_opened');
+                }
+
                 // Start animation (with looping)
                 setTimeout(() => animateTutorialDemo(true), 500);
 
@@ -3294,6 +3324,12 @@
             if (helpBtn) {
                 helpBtn.addEventListener('click', () => {
                     tutorialModal.style.display = 'flex';
+
+                    // Track tutorial opened event
+                    if (typeof plausible !== 'undefined') {
+                        plausible('tutorial_opened');
+                    }
+
                     animateTutorialDemo();
                 });
             }
