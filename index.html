@@ -1845,15 +1845,22 @@
         // Format elapsed seconds as human-readable text
         function formatTimeHumanReadable(seconds) {
             if (seconds < 60) {
-                // Under 1 minute: "X seconds"
+                // Under 1 minute: "20 seconds"
                 return `${seconds} second${seconds === 1 ? '' : 's'}`;
             } else {
-                // 1 minute or more: "M minute(s) and S second(s)"
+                // 1 minute or more
                 const minutes = Math.floor(seconds / 60);
                 const secs = seconds % 60;
                 const minuteText = `${minutes} minute${minutes === 1 ? '' : 's'}`;
-                const secondText = `${secs} second${secs === 1 ? '' : 's'}`;
-                return `${minuteText} and ${secondText}`;
+
+                if (secs === 0) {
+                    // No seconds: "2 minutes"
+                    return minuteText;
+                } else {
+                    // With seconds: "1 minute 18 seconds" (no "and")
+                    const secondText = `${secs} second${secs === 1 ? '' : 's'}`;
+                    return `${minuteText} ${secondText}`;
+                }
             }
         }
 
@@ -2881,16 +2888,16 @@
             }
         });
 
-        // Share text templates
+        // Share text templates - all mention time only
         const shareTemplates = [
-            "I solved today's Word Hop in {time}!\nCan you do it too? {url}",
-            "Just finished Word Hop! Solve today's puzzle at {url}",
-            "I completed today's Word Hop in {time}!\nTry it now at {url}",
-            "Word Hop puzzle solved in {time}!\nThink you can beat my time? {url}",
-            "Today's Word Hop: Done in {time}!\nYour turn: {url}",
-            "Solved Word Hop today in {time}!\nCan you match it? {url}",
-            "Finished today's Word Hop in {time}. Can you beat it? {url}",
-            "Today's Word Hop complete! Solved in {time}. {url}"
+            "I solved today's Word Hop in {time}.\nPlay at {url}",
+            "Completed today's Word Hop in {time}.\nTry it at {url}",
+            "Just solved Word Hop in {time}.\nSee if you can beat my time: {url}",
+            "Finished Word Hop in {time}.\nThink you can beat it? {url}",
+            "Today's Word Hop solved in {time}.\nYour turn: {url}",
+            "Word Hop complete in {time}.\nCan you match it? {url}",
+            "Solved today's Word Hop in {time}.\nPlay at {url}",
+            "Today's Word Hop done in {time}.\nTry it: {url}"
         ];
 
         // Generate share text from templates
