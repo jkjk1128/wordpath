@@ -1156,6 +1156,7 @@
                 <!-- Check Path button: centered below word boxes -->
                 <div class="controls">
                     <button class="check-btn" id="check-btn">Check Path</button>
+                    <button class="check-btn" id="see-results-btn" style="display: none;">See Results</button>
                 </div>
             </div>
 
@@ -1750,10 +1751,54 @@
         let attemptsRemaining = 3;
         let gameOver = false;
         let puzzleSolved = false;  // Track if puzzle has been solved (locks game state)
+        let lastSolvedSolution = null;  // Store the last solved solution for reopening success screen
         let gameStartTime = null;  // Track when user starts playing
         let timerInterval = null;  // Timer update interval
         let timerVisible = false;  // Track if timer is visible
         let finalSolveTime = null;  // Store final solve time in human-readable format
+
+        // Toggle between Check Path and See Results buttons
+        function updateButtonVisibility() {
+            const checkBtn = document.getElementById('check-btn');
+            const seeResultsBtn = document.getElementById('see-results-btn');
+
+            if (puzzleSolved) {
+                // Show See Results, hide Check Path
+                checkBtn.style.display = 'none';
+                seeResultsBtn.style.display = 'block';
+            } else {
+                // Show Check Path, hide See Results
+                checkBtn.style.display = 'block';
+                seeResultsBtn.style.display = 'none';
+            }
+        }
+
+        // Disable all inputs when puzzle is solved
+        function disableInputs() {
+            document.querySelectorAll('.word-input').forEach(input => {
+                input.disabled = true;
+                input.style.cursor = 'not-allowed';
+                input.style.opacity = '0.7';
+            });
+        }
+
+        // Enable all inputs (for new game)
+        function enableInputs() {
+            document.querySelectorAll('.word-input').forEach(input => {
+                input.disabled = false;
+                input.style.cursor = 'text';
+                input.style.opacity = '1';
+            });
+        }
+
+        // Reopen the success screen with the last solved solution
+        function reopenSuccessScreen() {
+            if (lastSolvedSolution && puzzleSolved) {
+                // Check if there are more solutions to find
+                const hasMoreSolutions = foundSolutions.length < currentPuzzleSolutions.length;
+                showSuccessScreen(lastSolvedSolution, hasMoreSolutions);
+            }
+        }
 
         // Format elapsed seconds as mm:ss for timer display
         function formatTimeMMSS(seconds) {
@@ -2381,6 +2426,14 @@
             attemptsRemaining = 3;
             gameOver = false;
             puzzleSolved = false;  // Reset solved state for new game
+            lastSolvedSolution = null;  // Clear last solution
+
+            // Re-enable inputs for new game
+            enableInputs();
+
+            // Update button visibility (See Results → Check Path)
+            updateButtonVisibility();
+
             updateAttemptsDisplay();
             const messageEl = document.getElementById('message');
             messageEl.textContent = '';
@@ -2651,6 +2704,15 @@
                 // Mark puzzle as solved to lock game state
                 puzzleSolved = true;
 
+                // Store the solution for reopening
+                lastSolvedSolution = userSolution;
+
+                // Disable inputs to prevent further edits
+                disableInputs();
+
+                // Update button visibility (Check Path → See Results)
+                updateButtonVisibility();
+
                 // Stop the timer interval
                 if (timerInterval) {
                     clearInterval(timerInterval);
@@ -2829,6 +2891,9 @@
 
         // Event listeners
         document.getElementById('check-btn').addEventListener('click', checkPath);
+
+        // See Results button handler (shows success screen again after puzzle is solved)
+        document.getElementById('see-results-btn').addEventListener('click', reopenSuccessScreen);
 
         // Keep Playing button handler
         document.getElementById('keep-playing-btn').addEventListener('click', () => {
