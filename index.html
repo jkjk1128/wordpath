@@ -258,14 +258,6 @@
             gap: 0;
         }
 
-        .solutions-counter {
-            font-size: 0.95rem;
-            font-weight: 600;
-            color: #555;
-            text-align: center;
-            margin-bottom: 15px;
-        }
-
         .attempts-dots {
             display: flex;
             gap: 12px;
@@ -985,12 +977,6 @@
                 margin-bottom: 6px; /* Increased from 5px */
             }
 
-            /* Solutions counter */
-            .solutions-counter {
-                font-size: 0.8rem;
-                margin-bottom: 8px; /* Down from 15px */
-            }
-
             /* Attempts dots */
             .attempts-dots {
                 gap: 8px; /* Down from 12px */
@@ -1169,9 +1155,6 @@
 
         <div class="game-container">
             <div class="word-path-container">
-                <!-- Solutions Found: centered above dots -->
-                <div class="solutions-counter" id="solutions-counter">Solutions Found: 0 / 0</div>
-
                 <!-- Three dots: directly above first word box -->
                 <div class="attempts-dots" id="attempts-display">
                     <span class="dot" id="dot1">●</span>
@@ -1782,7 +1765,6 @@
         // Game state
         let currentPuzzle = null;
         let currentPuzzleSolutions = []; // All valid solutions for current puzzle
-        let foundSolutions = []; // Solutions the user has already found
         let attemptsRemaining = 3;
         let gameOver = false;
         // Game state enum
@@ -1849,9 +1831,7 @@
         // Reopen the success screen with the last solved solution
         function reopenSuccessScreen() {
             if (lastSolvedSolution && puzzleSolved) {
-                // Check if there are more solutions to find
-                const hasMoreSolutions = foundSolutions.length < currentPuzzleSolutions.length;
-                showSuccessScreen(lastSolvedSolution, hasMoreSolutions);
+                showSuccessScreen(lastSolvedSolution);
             }
         }
 
@@ -2389,15 +2369,6 @@
             return DAILY_PUZZLES.length; // Return count of valid puzzles
         }
 
-        // Update solutions counter
-        function updateSolutionsCounter() {
-            const counterEl = document.getElementById('solutions-counter');
-            if (counterEl) {
-                const totalSolutions = currentPuzzleSolutions.length;
-                const foundCount = foundSolutions.length;
-                counterEl.textContent = `Solutions Found: ${foundCount} / ${totalSolutions}`;
-            }
-        }
 
         // Update dots display
         function updateAttemptsDisplay() {
@@ -2447,9 +2418,6 @@
             currentPuzzleSolutions = findAllPaths(currentPuzzle.start, currentPuzzle.end);
             console.log(`✅ Found ${currentPuzzleSolutions.length} possible solution(s)\n`);
 
-            // Reset found solutions tracker
-            foundSolutions = [];
-
             // Reset final solve time
             finalSolveTime = null;
 
@@ -2472,9 +2440,6 @@
             if (timerToggle) {
                 timerToggle.textContent = 'Show timer';
             }
-
-            // Update solutions counter
-            updateSolutionsCounter();
 
             // Reset inputs
             document.getElementById('word1').value = '';
@@ -2651,24 +2616,14 @@
             // A path is valid if it follows all the rules (checked above)
             const userSolution = [word1, word2, word3];
 
-            // Check if user already found this exact solution
-            const alreadyFound = foundSolutions.some(found =>
-                found[0] === word1 && found[1] === word2 && found[2] === word3
-            );
-
-            if (alreadyFound) {
-                attemptsRemaining--;
-                updateAttemptsDisplay();
-                showMessage('You already found this solution! Try a different path.', 'error');
+            // Check if puzzle is already solved (can't submit twice)
+            if (puzzleSolved) {
+                showMessage('You already solved this puzzle!', 'error');
                 checkGameOver();
                 return;
             }
 
             // ✅ SUCCESS! The path is valid and follows all rules
-            // Add to found solutions
-            foundSolutions.push(userSolution);
-            updateSolutionsCounter();
-
             showMessage('Perfect! You solved it!', 'success');
 
             // Remove any existing correct/highlight classes before animation
@@ -2681,10 +2636,8 @@
             glowPath();
 
             // Check if there are more solutions to find
-            const hasMoreSolutions = foundSolutions.length < currentPuzzleSolutions.length;
-
             setTimeout(() => {
-                showSuccessScreen(userSolution, hasMoreSolutions);
+                showSuccessScreen(userSolution);
             }, 1500);
         }
 
@@ -2700,69 +2653,44 @@
         // Show game over screen
         function showGameOverScreen() {
             // Show solutions the user found (if any)
-            let solutionsHTML = '';
+            // Show one valid solution
+            let solutionsHTML = `<div style="text-align: center; padding: 20px;">`;
+            solutionsHTML += `<div style="font-size: 1.1rem; margin-bottom: 20px; opacity: 0.8;">Out of attempts! The puzzle resets tomorrow.</div>`;
 
-            if (foundSolutions.length === 0) {
-                // No solutions found - encourage them
-                solutionsHTML = `<div style="text-align: center; padding: 20px;">`;
-                solutionsHTML += `<div style="font-size: 1.2rem; margin-bottom: 15px; opacity: 0.8;">No valid paths found this time.</div>`;
-                solutionsHTML += `<div style="font-size: 1rem; opacity: 0.6;">Come back tomorrow for a new puzzle!</div>`;
-                solutionsHTML += `</div>`;
-            } else if (foundSolutions.length === 1) {
-                // Show the single solution they found
-                const solution = foundSolutions[0];
-                solutionsHTML = `<div style="display: flex; flex-direction: column; align-items: center; gap: 10px;">`;
-                solutionsHTML += `<div style="font-size: 1rem; margin-bottom: 10px; opacity: 0.8;">Your solution:</div>`;
+            if (currentPuzzleSolutions.length > 0) {
+                solutionsHTML += `<div style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">Here's a valid solution:</div>`;
+
+                const solution = currentPuzzleSolutions[0]; // Show first valid solution
+                solutionsHTML += `<div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">`;
 
                 // Start word
-                solutionsHTML += `<div style="background: #f5f5f5; border: 3px solid #000; border-radius: 12px; padding: 15px 25px; font-size: 1.5rem; font-weight: 700; letter-spacing: 3px; box-shadow: 0 3px 0 #000;">${currentPuzzle.start.toUpperCase()}</div>`;
+                solutionsHTML += `<div style="background: #f5f5f5; border: 2px solid #000; border-radius: 10px; padding: 12px 20px; font-size: 1.2rem; font-weight: 700; letter-spacing: 2px; box-shadow: 0 2px 0 #000; min-width: 120px; text-align: center;">${currentPuzzle.start.toUpperCase()}</div>`;
 
                 // Intermediary words
                 solution.forEach(word => {
-                    solutionsHTML += `<div style="background: #fff; border: 3px solid #000; border-radius: 12px; padding: 15px 25px; font-size: 1.5rem; font-weight: 700; letter-spacing: 3px; box-shadow: 0 3px 0 #000;">${word.toUpperCase()}</div>`;
+                    solutionsHTML += `<div style="background: #fff; border: 2px solid #000; border-radius: 10px; padding: 12px 20px; font-size: 1.2rem; font-weight: 700; letter-spacing: 2px; box-shadow: 0 2px 0 #000; min-width: 120px; text-align: center;">${word.toUpperCase()}</div>`;
                 });
 
                 // End word
-                solutionsHTML += `<div style="background: #f5f5f5; border: 3px solid #000; border-radius: 12px; padding: 15px 25px; font-size: 1.5rem; font-weight: 700; letter-spacing: 3px; box-shadow: 0 3px 0 #000;">${currentPuzzle.end.toUpperCase()}</div>`;
-
-                solutionsHTML += `</div>`;
-            } else {
-                // Multiple solutions - show them side by side
-                solutionsHTML = `<div style="display: flex; gap: 20px; max-height: 400px; overflow-x: auto; overflow-y: hidden; padding: 10px;">`;
-
-                foundSolutions.forEach((solution, index) => {
-                    solutionsHTML += `<div style="display: flex; flex-direction: column; align-items: center; gap: 10px; min-width: 150px;">`;
-                    solutionsHTML += `<div style="font-size: 0.9rem; font-weight: 600; margin-bottom: 5px;">Solution ${index + 1}</div>`;
-
-                    // Start word
-                    solutionsHTML += `<div style="background: #f5f5f5; border: 2px solid #000; border-radius: 10px; padding: 12px 20px; font-size: 1.2rem; font-weight: 700; letter-spacing: 2px; box-shadow: 0 2px 0 #000;">${currentPuzzle.start.toUpperCase()}</div>`;
-
-                    // Intermediary words
-                    solution.forEach(word => {
-                        solutionsHTML += `<div style="background: #fff; border: 2px solid #000; border-radius: 10px; padding: 12px 20px; font-size: 1.2rem; font-weight: 700; letter-spacing: 2px; box-shadow: 0 2px 0 #000;">${word.toUpperCase()}</div>`;
-                    });
-
-                    // End word
-                    solutionsHTML += `<div style="background: #f5f5f5; border: 2px solid #000; border-radius: 10px; padding: 12px 20px; font-size: 1.2rem; font-weight: 700; letter-spacing: 2px; box-shadow: 0 2px 0 #000;">${currentPuzzle.end.toUpperCase()}</div>`;
-
-                    solutionsHTML += `</div>`;
-                });
+                solutionsHTML += `<div style="background: #f5f5f5; border: 2px solid #000; border-radius: 10px; padding: 12px 20px; font-size: 1.2rem; font-weight: 700; letter-spacing: 2px; box-shadow: 0 2px 0 #000; min-width: 120px; text-align: center;">${currentPuzzle.end.toUpperCase()}</div>`;
 
                 solutionsHTML += `</div>`;
             }
+
+            solutionsHTML += `</div>`;
 
             document.getElementById('solution-path').innerHTML = solutionsHTML;
             document.getElementById('game-over-screen').style.display = 'flex';
         }
 
         // Show success screen
-        function showSuccessScreen(userSolution, hasMoreSolutions) {
+        function showSuccessScreen(userSolution) {
             const word1 = userSolution[0];
             const word2 = userSolution[1];
             const word3 = userSolution[2];
 
-            // Calculate and store solve time (only once, on first solution or when all found)
-            if (!hasMoreSolutions && gameStartTime && gameState !== GameState.SOLVED) {
+            // Calculate and store solve time
+            if (gameStartTime && gameState !== GameState.SOLVED) {
                 // FREEZE TIME - Single source of truth
                 const elapsedSeconds = Math.floor((Date.now() - gameStartTime) / 1000);
                 finalSolveSeconds = elapsedSeconds;  // Store in seconds (immutable)
@@ -2820,71 +2748,47 @@
 
             messageHTML += `</div>`;
 
-            // Show player statistics if puzzle is complete
-            if (!hasMoreSolutions) {
-                const stats = getPlayerStats();
-                const winPercentage = calculateWinPercentage(stats);
-                const elapsedSeconds = getElapsedSeconds();
-                const timeDisplay = formatTimeMMSS(elapsedSeconds);
+            // Show player statistics
+            const stats = getPlayerStats();
+            const winPercentage = calculateWinPercentage(stats);
+            const elapsedSeconds = getElapsedSeconds();
+            const timeDisplay = formatTimeMMSS(elapsedSeconds);
 
-                messageHTML += `<div class="player-stats">`;
+            messageHTML += `<div class="player-stats">`;
 
-                // Games Played
-                messageHTML += `<div class="stat-box">`;
-                messageHTML += `<div class="stat-number">${stats.gamesPlayed}</div>`;
-                messageHTML += `<div class="stat-label">Played</div>`;
-                messageHTML += `</div>`;
+            // Games Played
+            messageHTML += `<div class="stat-box">`;
+            messageHTML += `<div class="stat-number">${stats.gamesPlayed}</div>`;
+            messageHTML += `<div class="stat-label">Played</div>`;
+            messageHTML += `</div>`;
 
-                // Win Percentage
-                messageHTML += `<div class="stat-box">`;
-                messageHTML += `<div class="stat-number">${winPercentage}%</div>`;
-                messageHTML += `<div class="stat-label">Win %</div>`;
-                messageHTML += `</div>`;
+            // Win Percentage
+            messageHTML += `<div class="stat-box">`;
+            messageHTML += `<div class="stat-number">${winPercentage}%</div>`;
+            messageHTML += `<div class="stat-label">Win %</div>`;
+            messageHTML += `</div>`;
 
-                // Time (today's puzzle)
-                messageHTML += `<div class="stat-box">`;
-                messageHTML += `<div class="stat-number">${timeDisplay}</div>`;
-                messageHTML += `<div class="stat-label">Time</div>`;
-                messageHTML += `</div>`;
+            // Time (today's puzzle)
+            messageHTML += `<div class="stat-box">`;
+            messageHTML += `<div class="stat-number">${timeDisplay}</div>`;
+            messageHTML += `<div class="stat-label">Time</div>`;
+            messageHTML += `</div>`;
 
-                messageHTML += `</div>`;
-            }
+            messageHTML += `</div>`;
 
             messageHTML += `<div style="margin-top: 20px; font-size: 0.95rem; opacity: 0.8;">`;
-
-            // Conditional messaging based on remaining solutions
-            const totalSolutions = currentPuzzleSolutions.length;
-            const foundCount = foundSolutions.length;
-
-            if (hasMoreSolutions) {
-                const remaining = totalSolutions - foundCount;
-                if (remaining === 1) {
-                    messageHTML += `Can you find the other path?`;
-                } else {
-                    messageHTML += `Can you find another path?`;
-                }
-            } else {
-                messageHTML += `Come back tomorrow for a new puzzle.`;
-            }
-
+            messageHTML += `Come back tomorrow for a new puzzle.`;
             messageHTML += `</div>`;
             messageHTML += `</div>`;
 
             document.getElementById('success-path').innerHTML = messageHTML;
 
-            // Show/hide buttons based on whether there are more solutions
+            // Always show Return to Game button, never Keep Playing
             const keepPlayingBtn = document.getElementById('keep-playing-btn');
             const returnFromSuccessBtn = document.getElementById('return-from-success-btn');
 
-            if (hasMoreSolutions) {
-                // Show Keep Playing button
-                if (keepPlayingBtn) keepPlayingBtn.style.display = 'block';
-                if (returnFromSuccessBtn) returnFromSuccessBtn.style.display = 'none';
-            } else {
-                // Show Return to Game button when all solutions found
-                if (keepPlayingBtn) keepPlayingBtn.style.display = 'none';
-                if (returnFromSuccessBtn) returnFromSuccessBtn.style.display = 'block';
-            }
+            if (keepPlayingBtn) keepPlayingBtn.style.display = 'none';
+            if (returnFromSuccessBtn) returnFromSuccessBtn.style.display = 'block';
 
             document.getElementById('success-screen').style.display = 'flex';
 
@@ -2964,102 +2868,47 @@
         // See Results button handler (shows success screen again after puzzle is solved)
         document.getElementById('see-results-btn').addEventListener('click', reopenSuccessScreen);
 
-        // Keep Playing button handler
-        document.getElementById('keep-playing-btn').addEventListener('click', () => {
-            // Hide success screen
-            document.getElementById('success-screen').style.display = 'none';
-
-            // Reset inputs for next solution
-            document.getElementById('word1').value = '';
-            document.getElementById('word2').value = '';
-            document.getElementById('word3').value = '';
-
-            // Clear highlights
-            document.querySelectorAll('.word-input, .word-box').forEach(el => {
-                el.classList.remove('highlight-green');
-                el.classList.remove('correct');
-            });
-
-            // Reset attempts for next solution
-            attemptsRemaining = 3;
-            updateAttemptsDisplay();
-            showMessage('', '');
-
-            // Focus first input
-            document.getElementById('word1').focus();
-        });
-
-        // Return to Game button handlers
+        // Return to Game button handler
         document.getElementById('return-from-success-btn').addEventListener('click', () => {
             // Hide success screen
             document.getElementById('success-screen').style.display = 'none';
 
-            // Show one of the solutions the user found
-            if (foundSolutions.length > 0) {
-                const lastSolution = foundSolutions[foundSolutions.length - 1];
-                document.getElementById('word1').value = lastSolution[0].toUpperCase();
-                document.getElementById('word2').value = lastSolution[1].toUpperCase();
-                document.getElementById('word3').value = lastSolution[2].toUpperCase();
+            // Show the solved solution
+            if (lastSolvedSolution) {
+                document.getElementById('word1').value = lastSolvedSolution[0].toUpperCase();
+                document.getElementById('word2').value = lastSolvedSolution[1].toUpperCase();
+                document.getElementById('word3').value = lastSolvedSolution[2].toUpperCase();
             }
         });
 
-        // Share text templates for single solution puzzles
-        const singleSolutionTemplates = [
+        // Share text templates
+        const shareTemplates = [
             "I solved today's Word Hop in {time}!\nCan you do it too? {url}",
             "Just finished Word Hop! Solve today's puzzle at {url}",
             "I completed today's Word Hop in {time}!\nTry it now at {url}",
             "Word Hop puzzle solved in {time}!\nThink you can beat my time? {url}",
             "Today's Word Hop: Done in {time}!\nYour turn: {url}",
-            "Solved Word Hop today in {time}!\nCan you match it? {url}"
-        ];
-
-        // Share text templates for multiple solution puzzles
-        const multipleSolutionTemplates = [
-            "I found {found} solution{s} in today's Word Hop in {time}!\nCan you find them all? {url}",
-            "Word Hop completed: {found}/{total} solutions in {time}!\nChallenge yourself: {url}",
-            "Solved Word Hop today and discovered {found} solution{s} in {time}.\nCan you beat me? {url}",
-            "Found {found} out of {total} solutions in Word Hop today!\nTime: {time}. Try it: {url}",
-            "Word Hop challenge: {found}/{total} solutions found in {time}.\nCan you find more? {url}",
-            "Today's Word Hop: {found} solution{s} in {time}!\nThink you can do better? {url}"
+            "Solved Word Hop today in {time}!\nCan you match it? {url}",
+            "Finished today's Word Hop in {time}. Can you beat it? {url}",
+            "Today's Word Hop complete! Solved in {time}. {url}"
         ];
 
         // Generate share text from templates
-        function generateShareText(totalSolutions, foundCount, timeString) {
+        function generateShareText(timeString) {
             const url = "www.playwordhop.com";
-            let template;
 
-            if (totalSolutions === 1) {
-                // Randomly select from single solution templates
-                const randomIndex = Math.floor(Math.random() * singleSolutionTemplates.length);
-                template = singleSolutionTemplates[randomIndex];
+            // Randomly select from share templates
+            const randomIndex = Math.floor(Math.random() * shareTemplates.length);
+            const template = shareTemplates[randomIndex];
 
-                // Replace placeholders
-                return template
-                    .replace('{time}', timeString)
-                    .replace('{url}', url);
-            } else {
-                // Randomly select from multiple solution templates
-                const randomIndex = Math.floor(Math.random() * multipleSolutionTemplates.length);
-                template = multipleSolutionTemplates[randomIndex];
-
-                // Handle singular/plural for "solution"
-                const plural = foundCount === 1 ? '' : 's';
-
-                // Replace placeholders
-                return template
-                    .replace('{found}', foundCount)
-                    .replace('{total}', totalSolutions)
-                    .replace('{time}', timeString)
-                    .replace('{s}', plural)
-                    .replace('{url}', url);
-            }
+            // Replace placeholders
+            return template
+                .replace('{time}', timeString)
+                .replace('{url}', url);
         }
 
         // Share button handler
         document.getElementById('share-btn').addEventListener('click', () => {
-            const totalSolutions = currentPuzzleSolutions.length;
-            const foundCount = foundSolutions.length;
-
             // Use finalSolveTime if available, otherwise calculate current time in human-readable format
             let timeString;
             if (finalSolveTime) {
@@ -3070,7 +2919,7 @@
             }
 
             // Generate dynamic share text
-            const shareText = generateShareText(totalSolutions, foundCount, timeString);
+            const shareText = generateShareText(timeString);
 
             // Try Web Share API first (mobile), fallback to clipboard
             if (navigator.share) {
@@ -3100,12 +2949,11 @@
             // Hide game over screen
             document.getElementById('game-over-screen').style.display = 'none';
 
-            // Show one of the solutions the user found (if any)
-            if (foundSolutions.length > 0) {
-                const lastSolution = foundSolutions[foundSolutions.length - 1];
-                document.getElementById('word1').value = lastSolution[0].toUpperCase();
-                document.getElementById('word2').value = lastSolution[1].toUpperCase();
-                document.getElementById('word3').value = lastSolution[2].toUpperCase();
+            // Show the solved solution (if any)
+            if (lastSolvedSolution) {
+                document.getElementById('word1').value = lastSolvedSolution[0].toUpperCase();
+                document.getElementById('word2').value = lastSolvedSolution[1].toUpperCase();
+                document.getElementById('word3').value = lastSolvedSolution[2].toUpperCase();
             }
         });
 
