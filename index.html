@@ -1752,12 +1752,32 @@
         let foundSolutions = []; // Solutions the user has already found
         let attemptsRemaining = 3;
         let gameOver = false;
+        // Game state enum
+        const GameState = {
+            IDLE: 'idle',      // Before play button clicked
+            PLAYING: 'playing', // Timer running, puzzle in progress
+            SOLVED: 'solved'    // Puzzle completed, timer frozen
+        };
+
+        let gameState = GameState.IDLE;  // Current game state
+        let finalSolveSeconds = null;    // Store final solve time in seconds (immutable after solve)
         let puzzleSolved = false;  // Track if puzzle has been solved (locks game state)
         let lastSolvedSolution = null;  // Store the last solved solution for reopening success screen
         let gameStartTime = null;  // Track when user starts playing
         let timerInterval = null;  // Timer update interval
         let timerVisible = false;  // Track if timer is visible
         let finalSolveTime = null;  // Store final solve time in human-readable format
+
+        // Get elapsed seconds - returns frozen time if solved, live time if playing
+        function getElapsedSeconds() {
+            if (gameState === GameState.SOLVED && finalSolveSeconds !== null) {
+                return finalSolveSeconds;  // Return frozen time
+            }
+            if (gameStartTime) {
+                return Math.floor((Date.now() - gameStartTime) / 1000);  // Return live time
+            }
+            return 0;
+        }
 
         // Toggle between Check Path and See Results buttons
         function updateButtonVisibility() {
@@ -1826,9 +1846,9 @@
 
         // Update timer display
         function updateTimer() {
-            if (!gameStartTime) return;
+            if (gameState === GameState.IDLE) return;
 
-            const elapsedSeconds = Math.floor((Date.now() - gameStartTime) / 1000);
+            const elapsedSeconds = getElapsedSeconds();
             const timerToggle = document.getElementById('timer-toggle');
 
             if (timerVisible && timerToggle) {
@@ -2400,6 +2420,19 @@
             // Reset final solve time
             finalSolveTime = null;
 
+            // Reset game state
+            gameState = GameState.IDLE;
+            finalSolveSeconds = null;
+            gameStartTime = null;
+            puzzleSolved = false;
+            lastSolvedSolution = null;
+
+            // Clear timer interval
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+
             // Reset timer toggle display
             timerVisible = false;
             const timerToggle = document.getElementById('timer-toggle');
@@ -2696,9 +2729,14 @@
             const word3 = userSolution[2];
 
             // Calculate and store solve time (only once, on first solution or when all found)
-            if (!hasMoreSolutions && gameStartTime && !finalSolveTime) {
+            if (!hasMoreSolutions && gameStartTime && gameState !== GameState.SOLVED) {
+                // FREEZE TIME - Single source of truth
                 const elapsedSeconds = Math.floor((Date.now() - gameStartTime) / 1000);
-                finalSolveTime = formatTimeHumanReadable(elapsedSeconds);
+                finalSolveSeconds = elapsedSeconds;  // Store in seconds (immutable)
+                finalSolveTime = formatTimeHumanReadable(elapsedSeconds);  // Store human-readable
+
+                // Update game state to SOLVED (permanent)
+                gameState = GameState.SOLVED;
 
                 // Update player statistics
                 updateStatsOnWin();
@@ -2715,7 +2753,7 @@
                 // Update button visibility (Check Path → See Results)
                 updateButtonVisibility();
 
-                // Stop the timer interval
+                // STOP TIMER PERMANENTLY
                 if (timerInterval) {
                     clearInterval(timerInterval);
                     timerInterval = null;
@@ -2753,7 +2791,7 @@
             if (!hasMoreSolutions) {
                 const stats = getPlayerStats();
                 const winPercentage = calculateWinPercentage(stats);
-                const elapsedSeconds = gameStartTime ? Math.floor((Date.now() - gameStartTime) / 1000) : 0;
+                const elapsedSeconds = getElapsedSeconds();
                 const timeDisplay = formatTimeMMSS(elapsedSeconds);
 
                 messageHTML += `<div class="player-stats">`;
@@ -3018,6 +3056,7 @@
             // Hide landing page when play is clicked
             playBtn.addEventListener('click', () => {
                 gameStartTime = Date.now();  // Start timing
+                gameState = GameState.PLAYING;  // Set state to playing
 
                 // Start timer update interval
                 if (timerInterval) {
@@ -3286,8 +3325,8 @@
                     timerVisible = !timerVisible;
 
                     if (timerVisible) {
-                        // Show timer - display current elapsed time
-                        const elapsedSeconds = gameStartTime ? Math.floor((Date.now() - gameStartTime) / 1000) : 0;
+                        // Show timer - display frozen time if solved, live time if playing
+                        const elapsedSeconds = getElapsedSeconds();
                         timerToggle.textContent = formatTimeMMSS(elapsedSeconds);
                     } else {
                         // Hide timer - show "Show timer" text
