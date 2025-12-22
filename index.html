@@ -86,10 +86,17 @@
             font-family: 'Arial Rounded MT Bold', Arial, -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
+        .landing-puzzle-number {
+            font-size: 0.95rem;
+            color: #999;
+            margin-top: 20px;
+            font-family: 'Arial Rounded MT Bold', Arial, -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
         .landing-date {
             font-size: 0.9rem;
             color: #999;
-            margin-top: 20px;
+            margin-top: 8px;
             font-family: 'Arial Rounded MT Bold', Arial, -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
@@ -832,9 +839,14 @@
                 font-size: 1.2rem;
             }
 
+            .landing-puzzle-number {
+                font-size: 0.85rem;
+                margin-top: 15px;
+            }
+
             .landing-date {
                 font-size: 0.8rem;
-                margin-top: 15px;
+                margin-top: 6px;
             }
 
             .word-path-container {
@@ -1101,6 +1113,7 @@
         <h1 class="landing-title">Word Hop</h1>
         <p class="landing-subtitle">Hop from word to word by changing one letter at a time</p>
         <button class="play-btn" id="play-btn-landing">Play</button>
+        <p class="landing-puzzle-number" id="landing-puzzle-number">Daily Puzzle #1</p>
         <p class="landing-date" id="landing-date">Saturday, December 21, 2025</p>
     </div>
 
@@ -2973,11 +2986,38 @@
             const landingPage = document.getElementById('landing-page');
             const playBtn = document.getElementById('play-btn-landing');
             const landingDate = document.getElementById('landing-date');
+            const landingPuzzleNumber = document.getElementById('landing-puzzle-number');
 
-            // Set current date with day of the week
+            // Get current date in ET timezone for both puzzle number and date display
             const now = new Date();
-            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-            landingDate.textContent = now.toLocaleDateString('en-US', options);
+            const etDateString = now.toLocaleDateString("en-US", {
+                timeZone: "America/New_York",
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            });
+
+            // Parse the ET date (format: MM/DD/YYYY)
+            const [etMonth, etDay, etYear] = etDateString.split('/');
+            const currentETDate = new Date(etYear, etMonth - 1, etDay);
+
+            // Calculate puzzle number (December 8, 2025 is Puzzle #1)
+            const firstPuzzleDate = new Date(2025, 11, 8); // December 8, 2025 (month is 0-indexed)
+            const daysSinceFirstPuzzle = Math.floor((currentETDate - firstPuzzleDate) / (1000 * 60 * 60 * 24));
+            const puzzleNumber = daysSinceFirstPuzzle + 1;
+
+            // Update puzzle number display
+            landingPuzzleNumber.textContent = `Daily Puzzle #${puzzleNumber}`;
+
+            // Set date display with ET timezone
+            const etDateFormatted = now.toLocaleDateString('en-US', {
+                timeZone: 'America/New_York',
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            landingDate.textContent = etDateFormatted;
 
             // Hide landing page when play is clicked
             playBtn.addEventListener('click', () => {
