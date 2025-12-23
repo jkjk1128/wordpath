@@ -2880,30 +2880,12 @@
             }
         });
 
-        // Share text templates - all mention time only
-        const shareTemplates = [
-            "I solved today's Word Hop in {time}.\nPlay at {url}",
-            "Completed today's Word Hop in {time}.\nTry it at {url}",
-            "Just solved Word Hop in {time}.\nSee if you can beat my time: {url}",
-            "Finished Word Hop in {time}.\nThink you can beat it? {url}",
-            "Today's Word Hop solved in {time}.\nYour turn: {url}",
-            "Word Hop complete in {time}.\nCan you match it? {url}",
-            "Solved today's Word Hop in {time}.\nPlay at {url}",
-            "Today's Word Hop done in {time}.\nTry it: {url}"
-        ];
-
-        // Generate share text from templates
+        // Generate share text with exact format
         function generateShareText(timeString) {
-            const url = "www.playwordhop.com";
+            return `I solved today's Word Hop in ${timeString}.
+Can you beat my time?
 
-            // Randomly select from share templates
-            const randomIndex = Math.floor(Math.random() * shareTemplates.length);
-            const template = shareTemplates[randomIndex];
-
-            // Replace placeholders
-            return template
-                .replace('{time}', timeString)
-                .replace('{url}', url);
+https://playwordhop.com`;
         }
 
         // Share button handler
